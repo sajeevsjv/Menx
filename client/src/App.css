@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Lobster&family=Pacifico&family=Satisfy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Lobster&family=Pacifico&family=Satisfy&family=Syne:wght@400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Lobster&family=Pacifico&family=Satisfy&family=Sen:wght@400..800&family=Syne:wght@400..800&display=swap');
+
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Poppins",sans-serif;
+}
+
+
+.signup-container{
+    display: flex;
+    justify-content: center;
+    background-color: red;
+    background-image: url("./components/images/mayagi_fashion_pgotograpghy_of_a_25_yo_queer_man_standing_again_e15ef361-7698-4369-9eb9-13.webp");
+    background-size: cover;
+    background-position: left;
+    padding: 115px;
+    height: 100%;
+
+}
+.form-container{
+    display: flex;
+    width: 70%;
+    animation: a1 0.3s ease-out 0s 1 forwards alternate;
+    box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+    border: 1px solid rgb(116, 116, 116);
+    border-radius: 10px;
+    
+}
+@keyframes a1 {
+    from{
+       opacity: 0;
+       transform: translateY(-100px)
+    }
+    to{
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+form{
+    width: 50%;
+    padding: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    background-color: #724d2d;
+
+    backdrop-filter: blur(10px);
+    gap: 14px;
+    border: none;
+    border-radius: 10px 0px 0px 10px;
+
+}
+form input,textarea {
+    width: 90%;
+    border: 1px solid rgb(190, 190, 190);
+    outline: none;
+    border-radius: 3px;
+    background-color: transparent;
+    padding: 8px;
+}
+input::placeholder{
+  color: rgb(255, 255, 255);
+  font-weight: 300;
+}
+.usertype-container{
+    display: flex;
+    flex-direction: column;
+    gap : 5px
+}
+.usertype-container select{
+    width: 90%;
+    font-size: 12px;
+    font-family: "popins",sans-serif;
+    padding: 10px;
+    border: 1px solid gray;
+    outline: none;
+}
+input::-webkit-input-placeholder { /* Chrome, Safari, Edge */
+    letter-spacing: 1px;
+}
+textarea::-webkit-input-placeholder { /* Chrome, Safari, Edge */
+    letter-spacing: 1px;
+}
+.login-txt{
+    font-size: 26px;
+    font-family: "Syne", sans-serif;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color:  #d69154;
+    font-weight: bolder;
+}
+.img-section{
+    position: relative;
+    width: 50%;
+    background-image: url("./components/images/mayagi_fashion_pgotograpghy_of_a_25_yo_queer_man_standing_again_e15ef361-7698-4369-9eb9-13.webp");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    
+}
+.bgdark{
+    background-color: #000000;
+    opacity: .5;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+.img-section span{
+    z-index: 1;
+    font-family: "Syne",sans-serif;
+    letter-spacing: 4px;
+    font-style: normal;
+    text-align: center;
+}
+.continue{
+    font-size: 12px;
+    font-weight: 400;
+    color: white;
+}
+.menx-signup{
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffe1c6;
+}
+
+.pass{
+    width: 90%;
+    text-align: center;
+}
+.forgot-pass{
+    font-size: 12px;
+    width: 100%;
+    color: blue;
+
+}
+.line{
+    position: relative;
+    width: 90%;
+    height: 1px;
+    background-color: rgb(196, 196, 196);
+    margin-top: 8px;
+    margin-bottom: 8px;
+    top: 0;
+}
+.or{
+    position: absolute;
+    top: -13px;
+    text-align: center;
+    width: 100%;
+   
+
+}
+.or span{
+    background-color: rgb(255, 255, 255);
+    padding: 6px;
+    font-size: 12px;
+    color: gray;
+}
+.signup-txt{
+    width: 90%;
+    text-align: center;
+}
+.signup-txt a,span{
+    font-size: 12px;
+    color: gray;
+    
+}
+.signup-txt a{
+    color: blue;
+}
+
+/* From Uiverse.io by alexroumi */ 
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    width: 90%;
+    border: unset;
+    border-radius: 5px;
+    color: #e8e8e8;
+    z-index: 1;
+    /* background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100% ); */
+    background-color: #d69154;
+    position: relative;
+    font-weight: 1000;
+    font-size: 17px;
+    /* -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27); */
+    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
+    transition: all 250ms;
+    overflow: hidden;
+   }
+   
+   button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 5px;
+    background: #000000;
+    z-index: -1;
+    -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+    transition: all 250ms
+   }
+   
+   button:hover {
+    color: #e8e8e8;
+   }
+   
+   button:hover::before {
+    width: 100%;
+   }
+
+   ion-icon{
+    font-size: 24px;
+   }
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+}
+.clienterr{
+    color: red;
+    padding: 4px;
+    font-size: 11px;
+    letter-spacing: 1px;
+
+}
+.loginnav {
+    text-align: start;
+}
+.loginnav span{
+    font-size: 11px;
+}
+/* From Uiverse.io by vishnupprajapat */ 
+  @keyframes wave-46 {
+    50% {
+      transform: scale(0.9);
+    }
+  }
+.seller-span{
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+  
+.otp-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    padding: 80px;
+}
+.timerandresend{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-top: 5px;
+}
