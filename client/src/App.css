@@ -180,51 +180,6 @@ textarea::-webkit-input-placeholder { /* Chrome, Safari, Edge */
     color: blue;
 }
 
-/* From Uiverse.io by alexroumi */ 
-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    padding: 10px 15px;
-    width: 90%;
-    border: unset;
-    border-radius: 5px;
-    color: #e8e8e8;
-    z-index: 1;
-    /* background: linear-gradient(-45deg, #e81cff 0%, #40c9ff 100% ); */
-    background-color: #d69154;
-    position: relative;
-    font-weight: 1000;
-    font-size: 17px;
-    /* -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27); */
-    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-    transition: all 250ms;
-    overflow: hidden;
-   }
-   
-   button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 0;
-    border-radius: 5px;
-    background: #000000;
-    z-index: -1;
-    -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-    box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-    transition: all 250ms
-   }
-   
-   button:hover {
-    color: #e8e8e8;
-   }
-   
-   button:hover::before {
-    width: 100%;
-   }
 
    ion-icon{
     font-size: 24px;
@@ -388,7 +343,7 @@ button {
     color: white;
     text-align: center;
     font-size: 14px;
-    margin:100px 0px 2px 0px;
+    margin: 50px 0px 2px 0px;
 }
 .small-banner p{
     font-size: 12px;
@@ -502,7 +457,6 @@ nav{
     background-color: rgb(255, 255, 255);
     box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
     text-transform: uppercase;
-    padding: 8px;
 }
 .nav{
     display: flex;
@@ -556,20 +510,9 @@ ion-icon{
     letter-spacing: 4px;
     color: rgb(66, 66, 66);
 }
-.newin-section{
-    margin-top: 40px;
-    display: grid;
-    grid-template-columns: repeat(4,20%);
-    justify-content: center;
-    gap: 20px;
-}
 
-.box1{
-    grid-column: 1/ span 4;
-    margin-bottom: 20px;
-    font-size: 20px;
-    letter-spacing: 4px;
-}
+
+
 .box img{
     width: 100%;
 }
@@ -610,14 +553,122 @@ ion-icon{
     width: 100%;
     height: 100%;
 }
-.box{
-    padding: 10px;  
-    border-bottom: 1px solid #cf9663;
-    border-left: 5px solid #d4ad8b; 
-    transition: transform 0.3s ease-in-out;
-
-}
-.box :hover{
-    translate: scale(3);
-    
-}
+/* Product Card */
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 95%;
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Product Image */
+  .product-card .product-image {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+  }
+  
+  .product-card .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card .product-image:hover img {
+    transform: scale(1.1);
+  }
+  
+  .product-card .wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: #ff6b6b;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .product-card .wishlist-btn:hover {
+    transform: scale(1.1);
+    background-color: #ff6b6b;
+    color: #fff;
+  }
+  
+  /* Product Details */
+  .product-card .product-details {
+    padding: 15px;
+  }
+  
+  .product-card .product-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  .product-card .product-price {
+    font-size: 16px;
+    color: #ff6b6b;
+    margin: 5px 0;
+  }
+  
+  .product-card .product-description {
+    font-size: 14px;
+    color: #777;
+    margin: 10px 0;
+  }
+  
+  /* Product Actions */
+  .product-card .product-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #f4f4f4;
+  }
+  
+  .product-card .product-actions button {
+    padding: 10px 15px;
+    width: 100%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .product-card .add-to-cart {
+    background-color: #ffffff;
+    border: 1px solid #fcc390 ;
+    width: 100%;
+    color: #000000;
+  }
+  
+  .product-card .add-to-cart:hover {
+    background-color: #d3792a;
+    transform: translateY(-2px);
+    color: white;
+  }
+  
+  .product-card .buy-now {
+    background-color: rgb(0, 0, 0);
+    color: #fff;
+  }
+  
+  .product-card .buy-now:hover {
+    background-color: #ff4b4b;
+    transform: translateY(-2px);
+  }
+.newin{
+    letter-spacing: 4px;
+} 
