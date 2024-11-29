@@ -106,8 +106,7 @@ function Signup() {
             console.log("message : ", message);
             alert(message);
             
-            localStorage.setItem("email",data.email);
-            navigate("/otp")
+            navigate("/login")
 
         }
         catch (error) {
@@ -126,64 +125,137 @@ function Signup() {
 
     return (
         <>
-                <div className="signup-container">
-                    <div className="form-container">
-                        <form onSubmit={signup}>
-                            <div>
-                                <span className="login-txt">
-                                    Register
-                                </span>
-                            </div>
-                            {/* <div className="form-row">
-                             <span>Do you have an account? <a href="">Login</a></span>
-                        </div> */}
-                            <div className="form-row">
-                                <input type="text" name="name" id="name" onChange={handlechange} placeholder="Name" />
-                                <span className="clienterr" id="name-err" >{error.name_error}</span>
-                            </div>
-                            <div className="form-row">
-                                <input type="email" name="email" onChange={handlechange} id="email" placeholder="Email" />
-                                <span className="clienterr" id="email-err" >{error.email_error}</span>
-                            </div>
-                            <div className="form-row">
-                                <input type="password" name="password" onChange={handlechange} id="password" placeholder="password" />
-                                <span className="clienterr" id="pass-err" >{error.password_error}</span>
-                            </div>
-                            <div className="form-row">
-                                <input type="password" name="confirmpassword" onChange={handlechange} id="confirmpassword" placeholder="confirm password" />
-                                <span className="clienterr" id="pass-err" >{error.confirmpassword_err}</span>
-                            </div>
-
-                            <div className="usertype-container">
-                                <span><label htmlFor="ut">Select user type</label></span>
-                                <span>
-                                    <select name="user_type" id="ut">
-                                        <option value="user">User</option>
-                                        <option value="seller">Seller</option>
-                                    </select>
-                                </span>
-
-                            </div>
-
-                            <div className="login-btn">
-                                <button id="signup" type="submit">
-                                    <ion-icon name="person-add" />
-                                    SignUp
-                                </button>
-                            </div>
-                        </form>
-                        <div className="img-section">
-                            <div className="bgdark"></div>
-                            <span className="menx-signup">
-                                MENX
-                            </span>
-                            <span className="continue"> signup to continue ..</span>
-                        </div>
-                    </div>
+          {/*
+            This example requires updating your template:
+    
+            ```
+            <html class="h-full bg-white">
+            <body class="h-full">
+            ```
+          */}
+          <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+              <h1 className="text-center tracking-widest text-2xl font-bold text-orange-400">MENX</h1>
+              <h2 className="mt-8 text-center text-lg font-bold tracking-wider text-gray-900">
+                Sign up before continue
+              </h2>
+            </div>
+    
+            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+              <form action="#" method="POST" className="space-y-6" onSubmit={signup}>
+                <div>
+                  <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                    Name
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="name"
+                      name="name"
+                      type="name"
+                      required
+                      autoComplete="name"
+                      onChange={handlechange}
+                      
+                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400 focus:outline-none tracking-wide text-md sm:text-sm/6"
+                    />
+                    <span className="text-sm/4 text-red-500 tracking-wider">{error.name_error}</span>
+                  </div>
                 </div>
-            
+  
+                <div>
+                  <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                    Email address
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      onChange={handlechange}
+                      
+                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400 focus:outline-none tracking-wide text-md sm:text-sm/6"
+                    />
+                  <span className="text-sm/4 text-red-500 tracking-wider">{error.email_error}</span>
+  
+                  </div>
+                </div>
+    
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                      Password
+                    </label>
+                  </div>
+                  
+                  <div className="mt-1">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      autoComplete="current-password"
+                      onChange={handlechange}
+                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400  focus:outline-none text-md tracking-wide  sm:text-sm/6"
+                    />
+                  <span className="text-sm/4 text-red-500 tracking-wider">{error.password_error}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                      Confirm Password
+                    </label>
+                  </div>
+  
+                  <div className="mt-1">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      required
+                      autoComplete="current-password"
+                      onChange={handlechange}
+                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400  focus:outline-none text-md tracking-wide  sm:text-sm/6"
+                    />
+                    <span className="text-sm/4 text-red-500 tracking-wider">{error.confirmpassword_error}</span>
+                  </div>
+                </div>
 
+                <div>
+                  <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                    Select usertype
+                  </label>
+                  <div className="mt-1">
+                    <select name="user_type" onChange={handlechange} id="" className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400  focus:outline-none text-md tracking-wide  sm:text-sm/6">
+                        <option value="user">User</option>
+                        <option value="seller">Seller</option>
+                    </select>
+                  <span className="text-sm/4 text-red-500 tracking-wider">{error.email_error}</span>
+  
+                  </div>
+                </div>
+    
+                <div>
+                  <button
+                    type="submit"
+                    className="flex w-full justify-center rounded-md bg-orange-600 p-2.5  text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    Sign up
+                  </button>
+                </div>
+              </form>
+    
+              <p className="mt-10 text-center text-sm/6 text-gray-500">
+                Not a member?{' '}
+                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                  Start a 14 day free trial
+                </a>
+              </p>
+            </div>
+          </div>
         </>
-    )
+      )
 }
 export default Signup;

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const users = require('../db/models/users');
 const bcrypt = require('bcrypt');
+const { success_function, error_function} = require("../utils/response-handler");
 
 exports.login = async (req, res) => {
     try {
@@ -21,18 +22,21 @@ exports.login = async (req, res) => {
             let passwordMatch = bcrypt.compareSync(password, db_password);
             console.log("passwordMatch :", passwordMatch);
 
+            const user_type = user.user_type;
+
             if (passwordMatch) {
                 let token = jwt.sign({ user_id: user.id }, process.env.PRIVATE_KEY, { expiresIn: "10d" });
                 let data = {
-                    token
+                    token,
+                    user_type
+                    
                 }
                 let response = success_function({
                     statusCode: 200,
                     data,
                     message: "Login succesful"
                 });
-
-                res.status(response.statusCode).send(response);
+                res.status(response.statusCode).send(response);                
                 return;
             }
             else {

@@ -1,4 +1,5 @@
 const users = require('../db/models/users');
+const user_types = require("../db/models/user_types");
 const { success_function, error_function } = require('../utils/response-handler');
 const bcrypt = require('bcrypt');
 const sendEmail = require("../utils/send-email").sendEmail;
@@ -21,6 +22,13 @@ exports.signup = async function (req, res) {
 
     let count = await users.countDocuments({ email: emails });
     console.log("count : ", count);
+
+    let user_type_fromSignup = body.user_type;
+    console.log("user_type from input :",user_type_fromSignup);
+    let usertype = await  user_types.findOne({user_type : user_type_fromSignup});
+    if(usertype){
+      body.user_type = usertype._id;
+    }
 
     if (count > 0) {
       let response = error_function({

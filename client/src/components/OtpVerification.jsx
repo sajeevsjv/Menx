@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
 import { useMemo } from 'react';
+import { useNavigate } from "react-router-dom";
 
 function OtpVerification() {
-
+  
+  const navigate = useNavigate();
   const [otpInput, setOtpInput] = useState("")
   const [otpAttemptCount, setOtpAttemptCount] = useState(1);
 
@@ -32,8 +34,17 @@ function OtpVerification() {
       })
 
       console.log("response :", response);
-      console.log("response data :", response.data);
-      alert(reseponse.data.message);
+      let data = response.data;
+      console.log("data :",data);
+      let user_type = data.user_type;
+      const seller_user_type = "67472a23659bfab478d1ef7d";
+      if(user_type === seller_user_type){
+        console.log("connecting seller page")
+      }
+      else{
+        navigate('/')
+      }
+      alert(data.message);
     }
     catch (err) {
       if (err.response) {

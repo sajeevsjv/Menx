@@ -13,7 +13,8 @@ const users = new mongoose.Schema({
        type : String
     },
     user_type : {
-        type : String
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "user_types"
     }
 })
 
