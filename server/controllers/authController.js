@@ -23,12 +23,14 @@ exports.login = async (req, res) => {
             console.log("passwordMatch :", passwordMatch);
 
             const user_type = user.user_type;
+            const user_id = user._id;
 
             if (passwordMatch) {
                 let token = jwt.sign({ user_id: user.id }, process.env.PRIVATE_KEY, { expiresIn: "10d" });
                 let data = {
                     token,
-                    user_type
+                    user_type,
+                    user_id
                     
                 }
                 let response = success_function({

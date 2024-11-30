@@ -5,6 +5,7 @@ dotenv.config();
 const mongoConnect = require("./db/connect");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes");
 const cors = require("cors");
 
 mongoConnect();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({extended : true}));
 
 app.use(authRoutes);
 app.use(userRoutes);
+app.use(productRoutes);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`server running at http://localhost:${process.env.PORT}`);

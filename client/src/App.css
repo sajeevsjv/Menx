@@ -56,7 +56,7 @@
     border-radius: 10px 0px 0px 10px;
 
 }
-.form-container form input,textarea {
+/* .form-container form input,textarea {
     width: 90%;
     border: 1px solid rgb(190, 190, 190);
     outline: none;
@@ -80,14 +80,10 @@ input::placeholder{
     padding: 10px;
     border: 1px solid gray;
     outline: none;
-}
-input::-webkit-input-placeholder { /* Chrome, Safari, Edge */
-    letter-spacing: 1px;
-}
-textarea::-webkit-input-placeholder { /* Chrome, Safari, Edge */
-    letter-spacing: 1px;
-}
-.login-txt{
+} */
+
+
+/* .login-txt{
     font-size: 26px;
     font-family: "Syne", sans-serif;
     letter-spacing: 4px;
@@ -107,7 +103,7 @@ textarea::-webkit-input-placeholder { /* Chrome, Safari, Edge */
     align-items: center;
     color: white;
     
-}
+} */ 
 .bgdark{
     background-color: #000000;
     opacity: .5;
@@ -447,7 +443,7 @@ textarea::-webkit-input-placeholder { /* Chrome, Safari, Edge */
     background-color: #b97f4b;
 
 }
-nav{
+.topnav{
     width: 100%;
     margin: auto;
     display: flex;
@@ -463,6 +459,13 @@ nav{
     justify-content: center;
     align-items: center;
     gap: 10px;
+}
+.nav-left a{
+    font-size: 13px;
+    text-decoration: none;
+    letter-spacing: .5px;
+    text-transform: capitalize;
+    color: black;
 }
 .nav a{
     font-size: 13px;
@@ -555,11 +558,11 @@ ion-icon{
 }
 /* Product Card */
 .product-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border-radius: 7px;
     overflow: hidden;
     width: 95%;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
     text-align: center;
     position: relative;
   }
@@ -614,7 +617,7 @@ ion-icon{
   
   .product-card .product-name {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 500;
     color: #333;
     margin: 10px 0;
   }
@@ -636,7 +639,7 @@ ion-icon{
     display: flex;
     justify-content: space-around;
     padding: 10px;
-    background-color: #f4f4f4;
+    background-color: #ffffff;
   }
   
   .product-card .product-actions button {
@@ -655,9 +658,10 @@ ion-icon{
   }
   
   .product-card .add-to-cart:hover {
-    background-color: #d3792a;
+    background-color: #000000;
+    border: 1px solid #000000;
     transform: translateY(-2px);
-    color: white;
+    color: #ff8317;
   }
   
   .product-card .buy-now {
@@ -672,3 +676,114 @@ ion-icon{
 .newin{
     letter-spacing: 4px;
 } 
+
+/* addproduct */
+
+/* Scope styles under .product-form-container */
+.product-form-container {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.product-form-container .form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-form-container h1 {
+    text-align: center;
+    color: #333333;
+}
+
+/* Form Group */
+.product-form-container .form-group {
+    margin-bottom: 15px;
+}
+
+.product-form-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555555;
+}
+
+.product-form-container input[type="text"],
+.product-form-container input[type="number"],
+.product-form-container textarea,
+.product-form-container select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.product-form-container input[type="file"] {
+    padding: 5px;
+}
+
+.product-form-container textarea {
+    resize: none;
+}
+
+.product-form-container select {
+    height: 40px;
+}
+
+/* Submit Button */
+.product-form-container .btn-submit {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-form-container .btn-submit:hover {
+    background-color: #0056b3;
+}
+
+/* From Uiverse.io by escannord */ 
+.input {
+    max-width: 90%;
+    display: none;
+  }
+  
+  .labelFile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 70%;
+    border: 2px dashed #ccc;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+    color: #404040;
+    cursor: pointer;
+  }
+  
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-form-container .form-container {
+        padding: 15px;
+    }
+
+    .product-form-container .btn-submit {
+        font-size: 14px;
+    }
+}
+

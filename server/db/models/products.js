@@ -6,7 +6,7 @@ const products = mongoose.Schema({
         required : true
     },
     category : {
-        type : String,
+        type : Array,
         required : true
     },
     images : {
@@ -19,6 +19,18 @@ const products = mongoose.Schema({
     },
     offer_price : {
       type: Number,
+      required : true
+    },
+    seller_name : {
+      type : String,
+      required : true
+    },
+    description :{
+      type : String,
+      required : true
+    },
+    images : {
+      type : Array,
       required : true
     }
 })
