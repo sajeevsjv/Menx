@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import Nav from "./components/nav";
 import AddProduct from "./components/AddProduct";
 import SellerHome from "./components/SellerHome";
+import CategorySelector from "./components/Categories";
 function Routing(){
     return(
         <>
@@ -19,6 +20,7 @@ function Routing(){
             <Route path={"/navbar"}  element={<Navbar />} />
             <Route path={"/nav"} element={<Nav />} />
             <Route path={"/addproduct"} element={< AddProduct />} />
+            <Route path={"/categories"} element={< CategorySelector />} />
             </Routes>
         </Router>
         </>

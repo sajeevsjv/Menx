@@ -1,13 +1,54 @@
 import react from "react"
+import Nav from "./nav"
+import { useState } from "react";
+
+
+const categories = [
+  'T-Shirts',
+  'Shirts',
+  'Jeans',
+  'Jackets',
+  'Sweaters',
+  'Shoes',
+  'Accessories',
+  'Hats',
+  'Belts',
+  'Socks',
+  'Shorts',
+  'Pants',
+];
 
 export default function AddProduct() {
+
+ 
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const[data, setData] = useState({
+    name : "",
+    description :"",
+    price :"",
+    categories :[],
+    product_images :"",
+    product_count : ""
+  
+  })
+
+  const toggleCategory = (category) => {
+    setSelectedCategories((prevSelected) =>
+      prevSelected.includes(category)
+        ? prevSelected.filter((c) => c !== category)
+        : [...prevSelected, category]
+    );
+  };
+
   return (
     <>
-      <div className="main-product-form-container w-3/4 m-auto border-2 border-black p-5">
-        <div className="product-form-container">
-          <h1>
+      <Nav />
+      <div className="main-product-form-container mt-[50px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
+        <div className="product-form-container bg-transparent p-4">
+          <h2 className="text-center text-md uppercase tracking-[4px] font-medium text-[#ffa333]">
             Add Product
-          </h1>
+          </h2>
           <form action="/submit" method="POST" enctype="multipart/form-data">
             <div className="form-group">
               <label htmlFor="name">
@@ -54,6 +95,34 @@ export default function AddProduct() {
                   Accessories
                 </option>
               </select>
+            </div>
+            <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+              <h2 className="text-lg font-bold mb-4 text-gray-800">Select Categories</h2>
+              <form className="grid grid-cols-4 gap-4">
+                {categories.map((category) => (
+                  <label
+                    key={category}
+                    className="flex items-center space-x-2 cursor-pointer bg-gray-100 p-2 rounded-lg hover:bg-gray-200 transition"
+                  >
+                    <input
+                      type="checkbox"
+                      value={category}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => toggleCategory(category)}
+                      className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <span className="text-gray-700 font-medium">{category}</span>
+                  </label>
+                ))}
+              </form>
+              <div className="mt-6">
+                <h3 className="text-sm font-bold text-gray-800">Selected:</h3>
+                <p className="text-sm text-gray-600">
+                  {selectedCategories.length > 0
+                    ? selectedCategories.join(', ')
+                    : 'No categories selected'}
+                </p>
+              </div>
             </div>
             <div className="form-group">
               <label htmlFor="images">

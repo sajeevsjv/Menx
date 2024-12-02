@@ -1,147 +1,150 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import React, { useState } from "react";
 
+const Nav = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("Home");
 
-const handleClick = () =>{
-    console.log("btn clicked..")
-    alert("heloo");
-}
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    setMenuOpen(false); // Close menu on mobile when a link is clicked
+  };
 
-const navigation = [
-    { name: 'Dashboard', href: '#', onclick: handleClick, current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-]
+  return (
+    <nav className=" text-black border-b-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
+        <div className="flex items-center justify-between h-16">
+          {/* Hamburger Menu Button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="block lg:hidden text-black focus:outline-none w-[45%]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              />
+            </svg>
+          </button>
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
+          {/* Nav Links Dropdown for Mobile */}
+          <div
+            className={`${
+              menuOpen ? "block" : "hidden"
+            } absolute top-16 left-0 w-full bg-white z-10 border-b-2 lg:hidden `}
+          >
+            {["Home", "Products", "Shop", "Contact", "MyShop"].map((tab) => (
+              <a
+                key={tab}
+                href="#"
+                className={`block px-4 py-2 overflow-hidden transition-all duration-300 ease-in-out text-xs${
+                  activeTab === tab ? "text-orange-500 text-xs font-semibold" : ""
+                }`}
+                onClick={() => handleTabClick(tab)}
+              >
+                {tab}
+              </a>
+            ))}
+          </div>
 
+          {/* Nav Links for Desktop */}
+          <div className="hidden lg:flex gap-2 w-[45%] ">
+            {["Home", "Products", "Shop", "Contact", "MyShop"].map((tab) => (
+              <a
+                key={tab}
+                href="#"
+                className={`nav-link px-1 text-sm tracking-wider py-2 rounded-md hover:text-orange-400 ${
+                  activeTab === tab ? "font-semibold text-orange-400" : ""
+                }`}
+                onClick={() => handleTabClick(tab)}
+              >
+                {tab}
+              </a>
+            ))}
+          </div>
 
+          {/* Center Text Logo */}
+          <div className="text-xl uppercase tracking-[4px] font-bold">
+            <a href="#">Menx.</a>
+          </div>
 
-export default function Example() {
-    return (
-        <Disclosure as="nav" className="bg-white-800 border-1">
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-                <div className="relative flex h-16 items-center justify-between  bg-white-600">
-                    <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
-                        {/* Mobile menu button*/}
-                        <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-black-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                            <span className="absolute -inset-0.5" />
-                            <span className="sr-only">Open main menu</span>
-                            <Bars3Icon aria-hidden="true" className="block size-6 group-data-[open]:hidden" />
-                            <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-[open]:block" />
-                        </DisclosureButton>
-                    </div>
-                    <div className="flex w-1/2  items-center justify-start sm:items-stretch bg-white-400  sm:justify-start">
-                        <div className="hidden  md:block">
-                            <div className="flex gap-2">
-                                {navigation.map((item) => (
-                                    <a
-                                        key={item.name}
-                                        href={item.href}
-                                        aria-current={item.current ? 'page' : undefined}
-                                        className={classNames(
-                                            item.current ? 'text-black no-underline ' : 'text-gray-400 no-underline hover:text-orange-500',
-                                            'rounded-md no-underline py-2  text-sm font-medium',
-                                        )}
-                                        onClick={(e) => {
-                                            e.preventDefault(); // Prevent default navigation behavior
-                                            if (item.onClick) {
-                                                item.onClick(); // Call the specific function if it exists
-                                            }
-                                        }}
-                                    >
-                                        {item.name}
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="navlogo w-1/4 hidden md:flex justify-center  text-center">
-                        <h3 className='uppercase tracking-widest m-0'>Menx</h3>
-                    </div>
-
-                    <div className="absolute w-full inset-y-0 right-0 flex justify-end items-center gap-2  sm:static sm:inset-auto  sm:pr-0 ">
-                        <input type="text" name="search" placeholder="search.." />
-                        <ion-icon name="heart-outline" />
-                        <ion-icon name="bag-outline" />
-                        <button
-                            type="button"
-                            className="relative rounded-full  p-1 text-black-400 hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-                        >
-                            <span className="absolute -inset-1.5" />
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon aria-hidden="true" className="size-5" />
-                        </button>
-
-                        {/* Profile dropdown */}
-                        <Menu as="div" className="relative ml-3">
-                            <div>
-                                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">Open user menu</span>
-                                    <img
-                                        alt=""
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                        className="size-8 rounded-full"
-                                    />
-                                </MenuButton>
-                            </div>
-                            <MenuItems
-                                transition
-                                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                            >
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm no-underline hover:text-orange-400 text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                                    >
-                                        Your Profile
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm no-underline hover:text-orange-400 text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                                    >
-                                        Settings
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm no-underline hover:text-orange-400 text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                                    >
-                                        Sign out
-                                    </a>
-                                </MenuItem>
-                            </MenuItems>
-                        </Menu>
-                    </div>
-                </div>
+          {/* Right Side */}
+          <div className="flex items-center space-x-4 justify-end w-[45%]">
+            {/* Search Field */}
+            <div className="relative hidden lg:block">
+              <input
+                type="text"
+                placeholder="Search"
+                className="rounded-md pl-3 pr-10 py-1 text-black focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="absolute top-0 right-0 px-3 py-1 bg-gray-600 rounded-r-md hover:bg-gray-500"
+              >
+                Go
+              </button>
             </div>
 
-            <DisclosurePanel className="sm:hidden">
-                <div className="space-y-1 px-2 pb-3 pt-2">
-                    {navigation.map((item) => (
-                        <DisclosureButton
-                            key={item.name}
-                            as="a"
-                            href={item.href}
-                            aria-current={item.current ? 'page' : undefined}
-                            className={classNames(
-                                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                'block rounded-md px-3 py-2 text-base font-medium',
-                            )}
-                        >
-                            {item.name}
-                        </DisclosureButton>
-                    ))}
+            <ion-icon name="heart-outline" />
+                    <ion-icon name="bag-outline" />
+
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="hover:text-gray-300  focus:outline-none"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5.121 19.073A6 6 0 0110 21h4a6 6 0 014.879-1.927l1.12-7.446a4 4 0 00-.659-3.65l-1.1-1.1a4 4 0 00-5.657 0l-1.1 1.1a4 4 0 00-.659 3.65l1.12 7.446z"
+                  />
+                </svg>
+              </button>
+              {profileDropdownOpen && (
+                <div className="absolute z-10 right-0 mt-2 bg-white text-black rounded-md shadow-lg w-48">
+                  <a
+                    href="#"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Profile
+                  </a>
+                  <a
+                    href="#"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Settings
+                  </a>
+                  <a
+                    href="#"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Logout
+                  </a>
                 </div>
-            </DisclosurePanel>
-        </Disclosure>
-    )
-}
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Nav;

@@ -150,7 +150,7 @@ function UserHome() {
                         NEW IN
                     </span>
                 </div>
-                <div className="newin-section grid grid-cols-1 md:grid-cols-2  gap-4  w-11/12">
+                <div className="newin-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center items-center  gap-4  w-11/12">
                     <div className="product-card">
                         <div className="product-image">
                             <img src="https://lp2.hm.com/hmgoepprod?set=format%5Bwebp%5D%2Cquality%5B79%5D%2Csource%5B%2Fda%2Fea%2Fdaea0e239cfb458343f87a8b8ff0e9d2a4c4c25e.jpg%5D%2Corigin%5Bdam%5D%2Ccategory%5B%5D%2Ctype%5BDESCRIPTIVEDETAIL%5D%2Cres%5Bm%5D%2Chmver%5B2%5D&call=url%5Bfile%3A%2Fproduct%2Fmain%5D" alt="Product Image" />
