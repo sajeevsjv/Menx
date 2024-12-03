@@ -5,32 +5,35 @@ const products = mongoose.Schema({
         type : String,
         required : true
     },
-    category : {
+    categories : {
         type : Array,
         required : true
     },
-    images : {
-        type : Array,
-        required : true
+    mrp :{
+      type : Number,
+      required : true
     },
     price : {
       type: Number,
       required : true
     },
-    offer_price : {
-      type: Number,
+    colors: {
+      type : Array,
       required : true
     },
     seller_name : {
       type : String,
-      required : true
     },
     description :{
       type : String,
       required : true
     },
-    images : {
+    product_images : {
       type : Array,
+      required : true
+    },
+    product_count :{
+      type : Number,
       required : true
     }
 })

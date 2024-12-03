@@ -1,10 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import Nav from './nav';
 
 
 
@@ -77,7 +75,7 @@ const Login = () => {
 
         try {
             let response = await axios({
-                url: "http://localhost:3000/login",
+                url: "http://localhost:3003/login",
                 method: 'POST',
                 headers: {
                     "Content-type": "application/json"
@@ -121,7 +119,7 @@ const Login = () => {
 
     return (
         <>
-          <Navbar/>
+          <Nav/>
             <div className="login-form-container w-full flex justify-center">
                 <form action className="form_main" onSubmit={handleLogin}>
                     <p className="heading">Login</p>

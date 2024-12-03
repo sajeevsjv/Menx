@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Nav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
+  const navigate = useNavigate();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -11,9 +13,9 @@ const Nav = () => {
   };
 
   return (
-    <nav className=" text-black border-b-2">
+    <nav className=" text-black border-b-2 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-12">
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -83,11 +85,11 @@ const Nav = () => {
               <input
                 type="text"
                 placeholder="Search"
-                className="rounded-md pl-3 pr-10 py-1 text-black focus:outline-none"
+                className=" pl-3 pr-10 py-1 border-2 text-black focus:outline-none"
               />
               <button
                 type="submit"
-                className="absolute top-0 right-0 px-3 py-1 bg-gray-600 rounded-r-md hover:bg-gray-500"
+                className="absolute  h-9 top-0 right-0 px-3 py-1 bg-orange-400  hover:bg-black hover:text-white"
               >
                 Go
               </button>
@@ -122,14 +124,16 @@ const Nav = () => {
                   <a
                     href="#"
                     className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={()=> navigate("/login")}
                   >
-                    My Profile
+                    SignIn
                   </a>
                   <a
                     href="#"
                     className="block px-4 py-2 hover:bg-gray-100"
+                    onClick={()=> navigate("/signup")}
                   >
-                    Settings
+                    SignUp
                   </a>
                   <a
                     href="#"

@@ -1,169 +1,427 @@
-import react from "react"
-import Nav from "./nav"
-import { useState } from "react";
+import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import axios from "axios"
+import Nav from "./nav";
 
+const categoryStructure = {
+  Clothing: [
+    "T-Shirts & Polos",
+    "Shirts",
+    "Trousers",
+    "Jeans",
+    "Innerwear",
+    "Sportswear",
+    "Sleep & Lounge Wear",
+    "Ethnic Wear",
+    "Ties, Socks & Belts",
+    "Suits & Blazers",
+    "Sweaters",
+    "Jackets & Coats",
+  ],
 
-const categories = [
-  'T-Shirts',
-  'Shirts',
-  'Jeans',
-  'Jackets',
-  'Sweaters',
-  'Shoes',
-  'Accessories',
-  'Hats',
-  'Belts',
-  'Socks',
-  'Shorts',
-  'Pants',
-];
+  Shoes: [
+    "Sports Shoes",
+    "Formal Shoes",
+    "Casual Shoes",
+    "Sneakers",
+    "Loafers & Moccasins",
+    "Flip-Flops",
+    "Boots",
+    "Sandals & Floaters",
+    "Thong Sandals",
+    "Boat Shoes",
+  ],
+  Watches: ["Metallic", "Chronographs", "Leather"],
+  Jewellery: ["Rings", "Bracelets"],
+  Eyewear: ["Sunglasses", "Spectacle Frames"],
+  Wallets: [],
+};
+
+const sizeOptions = {
+  Clothing: ["SM", "M", "L", "XL", "2XL", "3XL"],
+  Shoes: ["7", "8", "9", "10", "11", "12"],
+};
 
 export default function AddProduct() {
 
- 
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [data, setData] = useState({
+    name: "",
+    description: "",
+    mrp: "",
+    price: "",
+    colors: "",
+    categories: [], // Holds main categories and selected subcategories
+    product_images: [], // Holds selected product images
+    product_count: 0,
+    sizes: []
+  });
 
-  const[data, setData] = useState({
-    name : "",
-    description :"",
-    price :"",
-    categories :[],
-    product_images :"",
-    product_count : ""
-  
-  })
+  const [newColor, setNewColor] = useState("#000000"); // Temporary color input state
 
-  const toggleCategory = (category) => {
-    setSelectedCategories((prevSelected) =>
-      prevSelected.includes(category)
-        ? prevSelected.filter((c) => c !== category)
-        : [...prevSelected, category]
-    );
+  const addColor = (color) => {
+    if (!data.colors.includes(color)) {
+      setData((prevData) => ({
+        ...prevData,
+        colors: [...prevData.colors, color],
+      }));
+    }
   };
+
+  const removeColor = (color) => {
+    setData((prevData) => ({
+      ...prevData,
+      colors: prevData.colors.filter((c) => c !== color),
+    }));
+  };
+
+  const handleChange = (e) => {
+    console.log("handle change worked");
+    const { name, value } = e.target;
+
+    if (name === "price" || name === "mrp") {
+      setData((prevData) => ({
+        ...prevData,
+        [name]: parseFloat(value), // Use parseInt(value) if you expect integers
+      }));
+    } else {
+      setData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  }
+
+  const toggleCategory = (mainCategory, subCategory = null) => {
+    setData((prevData) => {
+      const existingCategories = new Set(prevData.categories);
+
+      // Handle main category toggle
+      if (!subCategory) {
+        if (existingCategories.has(mainCategory)) {
+          // Remove main category and all its subcategories
+          categoryStructure[mainCategory].forEach((sub) => existingCategories.delete(sub));
+          existingCategories.delete(mainCategory);
+        } else {
+          // Add main category
+          existingCategories.add(mainCategory);
+        }
+      } else {
+        // Handle subcategory toggle
+        if (existingCategories.has(subCategory)) {
+          // Remove subcategory
+          existingCategories.delete(subCategory);
+
+          // If no subcategories are left, remove the main category
+          const hasOtherSelected = categoryStructure[mainCategory].some((sub) =>
+            existingCategories.has(sub)
+          );
+          if (!hasOtherSelected) existingCategories.delete(mainCategory);
+        } else {
+          // Add subcategory and ensure main category is included
+          existingCategories.add(subCategory);
+          existingCategories.add(mainCategory);
+        }
+      }
+
+      return { ...prevData, categories: Array.from(existingCategories) };
+    });
+  };
+
+  // Toggle size selection
+  const toggleSize = (size) => {
+    setData((prevData) => ({
+      ...prevData,
+      sizes: prevData.sizes.includes(size)
+        ? prevData.sizes.filter((s) => s !== size)
+        : [...prevData.sizes, size],
+    }));
+  };
+
+  // Get available size options based on category
+  const getAvailableSizes = () => {
+    if (data.categories.includes("Clothing")) return sizeOptions.Clothing;
+    if (data.categories.includes("Shoes")) return sizeOptions.Shoes;
+    return [];
+  };
+
+  // Handle image drop and convert to Base64
+  const onDrop = (acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setData((prevData) => ({
+          ...prevData,
+          product_images: [
+            ...prevData.product_images, reader.result  // Store Base64 string
+          ],
+        }));
+      };
+      reader.readAsDataURL(file); // Convert file to Base64 string
+    });
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".jpeg", ".png", ".jpg", ".gif"],
+    },
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("data :", data);
+
+    const authToken = localStorage.getItem("authToken");
+    console.log("authtoken :", authToken);
+
+
+    try {
+
+      let response = await axios({
+        url: "http://localhost:3003/addproduct",
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        data
+
+      })
+      console.log("response :", response);
+      console.log("message :", response.data.message);
+    }
+    catch (error) {
+      if (error.response) {
+        console.log("response msg ", error.response.data.message);
+        return
+      }
+      console.log(error.message ? error.message : error)
+    }
+
+  }
 
   return (
     <>
       <Nav />
-      <div className="main-product-form-container mt-[50px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
+      <div className="main-product-form-container mt-[50px] mb-[100px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
         <div className="product-form-container bg-transparent p-4">
           <h2 className="text-center text-md uppercase tracking-[4px] font-medium text-[#ffa333]">
             Add Product
           </h2>
-          <form action="/submit" method="POST" enctype="multipart/form-data">
+          <form action="/submit" method="POST" enctype="multipart/form-data" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">
-                Product Name
-              </label>
-              <input type="text" id="name" name="name" placeholder="Enter product name" required="" />
+              <label htmlFor="name">Product Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter product name"
+                required=""
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="description">
-                Description
-              </label>
-              <textarea id="description" name="description" rows="4" placeholder="Enter product description" required="" />
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                rows="4"
+                placeholder="Enter product description"
+                required=""
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="price">
-                Price
-              </label>
-              <input type="number" id="price" name="price" step="0.01" placeholder="Enter price" required="" />
+              <label htmlFor="mrp">MRP</label>
+              <input
+                type="number"
+                id="mrp"
+                name="mrp"
+                min="1"
+                step="1"
+                placeholder="Enter MRP"
+                required=""
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
-              <label htmlFor="seller_name">
-                Seller Name
-              </label>
-              <input type="text" id="seller_name" name="seller_name" placeholder="Enter seller name" required="" />
+              <label htmlFor="price">Price</label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                min="1"
+                step="1"
+                placeholder="Enter price"
+                required=""
+                onChange={handleChange}
+              />
             </div>
+
             <div className="form-group">
-              <label htmlFor="category">
-                Category
-              </label>
-              <select id="category" name="category[]" multiple="" required="">
-                <option value="shirts">
-                  Shirts
-                </option>
-                <option value="trousers">
-                  Trousers
-                </option>
-                <option value="jackets">
-                  Jackets
-                </option>
-                <option value="shoes">
-                  Shoes
-                </option>
-                <option value="accessories">
-                  Accessories
-                </option>
-              </select>
+              <label htmlFor="price">Product Count</label>
+              <input type="number"
+                name="product_count"
+                min="1"
+                step="1"
+                onChange={handleChange}
+              />
             </div>
-            <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-              <h2 className="text-lg font-bold mb-4 text-gray-800">Select Categories</h2>
-              <form className="grid grid-cols-4 gap-4">
-                {categories.map((category) => (
-                  <label
-                    key={category}
-                    className="flex items-center space-x-2 cursor-pointer bg-gray-100 p-2 rounded-lg hover:bg-gray-200 transition"
-                  >
-                    <input
-                      type="checkbox"
-                      value={category}
-                      checked={selectedCategories.includes(category)}
-                      onChange={() => toggleCategory(category)}
-                      className="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                    />
-                    <span className="text-gray-700 font-medium">{category}</span>
-                  </label>
+
+            {/* Category Selection Section */}
+            <div className="w-full mx-auto pt-2">
+              <h2 className="text-md mb-4 text-gray-800">Select Categories</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {Object.keys(categoryStructure).map((mainCategory) => (
+                  <div key={mainCategory} className="border p-4 rounded-lg bg-gray-100">
+                    {/* Main Category */}
+                    <label className="flex pb-3 items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={data.categories.includes(mainCategory)}
+                        onChange={() => toggleCategory(mainCategory)}
+                        className="h-5 w-5 text-orange-400 focus:ring-orange-400 border-gray-300 rounded"
+                      />
+                      <span className="text-gray-700 text-sm font-semibold">
+                        {mainCategory}
+                      </span>
+                    </label>
+
+                    {/* Subcategories */}
+                    <div className="ml-6 mt-2 grid grid-cols-1 gap-2">
+                      {categoryStructure[mainCategory].map((subCategory) => (
+                        <label
+                          key={subCategory}
+                          className="flex items-center space-x-2 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={data.categories.includes(subCategory)}
+                            onChange={() => toggleCategory(mainCategory, subCategory)}
+                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                          />
+                          <span className="text-gray-600 text-sm">{subCategory}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 ))}
-              </form>
-              <div className="mt-6">
-                <h3 className="text-sm font-bold text-gray-800">Selected:</h3>
-                <p className="text-sm text-gray-600">
-                  {selectedCategories.length > 0
-                    ? selectedCategories.join(', ')
-                    : 'No categories selected'}
-                </p>
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="images">
-                Product Images
-              </label>
-              <label htmlFor="file" className="labelFile p-5">
-                <span className="flex justify-center">
-                  <svg xml:space="preserve" viewBox="0 0 184.69 184.69" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" id="Capa_1" version="1.1" width="60px" height="60px">
-                    <g>
-                      <g>
-                        <g>
-                          <path d="M149.968,50.186c-8.017-14.308-23.796-22.515-40.717-19.813
-				C102.609,16.43,88.713,7.576,73.087,7.576c-22.117,0-40.112,17.994-40.112,40.115c0,0.913,0.036,1.854,0.118,2.834
-				C14.004,54.875,0,72.11,0,91.959c0,23.456,19.082,42.535,42.538,42.535h33.623v-7.025H42.538
-				c-19.583,0-35.509-15.929-35.509-35.509c0-17.526,13.084-32.621,30.442-35.105c0.931-0.132,1.768-0.633,2.326-1.392
-				c0.555-0.755,0.795-1.704,0.644-2.63c-0.297-1.904-0.447-3.582-0.447-5.139c0-18.249,14.852-33.094,33.094-33.094
-				c13.703,0,25.789,8.26,30.803,21.04c0.63,1.621,2.351,2.534,4.058,2.14c15.425-3.568,29.919,3.883,36.604,17.168
-				c0.508,1.027,1.503,1.736,2.641,1.897c17.368,2.473,30.481,17.569,30.481,35.112c0,19.58-15.937,35.509-35.52,35.509H97.391
-				v7.025h44.761c23.459,0,42.538-19.079,42.538-42.535C184.69,71.545,169.884,53.901,149.968,50.186z" style={{ 'fill': '#010002' }} />
-                        </g>
-                        <g>
-                          <path d="M108.586,90.201c1.406-1.403,1.406-3.672,0-5.075L88.541,65.078
-				c-0.701-0.698-1.614-1.045-2.534-1.045l-0.064,0.011c-0.018,0-0.036-0.011-0.054-0.011c-0.931,0-1.85,0.361-2.534,1.045
-				L63.31,85.127c-1.403,1.403-1.403,3.672,0,5.075c1.403,1.406,3.672,1.406,5.075,0L82.296,76.29v97.227
-				c0,1.99,1.603,3.597,3.593,3.597c1.979,0,3.59-1.607,3.59-3.597V76.165l14.033,14.036
-				C104.91,91.608,107.183,91.608,108.586,90.201z" style={{ 'fill': '#010002' }} />
-                        </g>
-                      </g>
-                    </g>
-                  </svg>
-                </span>
-                <p>
-                  drag and drop your file here or click to select a file!
-                </p>
-              </label>
-              <input className="input" name="text" id="file" type="file" />
 
-              {/* <input type="file" id="images" name="images[]" accept="image/*" multiple="" required="" /> */}
+            {/* Size Selection */}
+            {getAvailableSizes().length > 0 && (
+              <div className="form-group mt-4">
+                <h3 className="text-md  text-gray-800 mb-4">
+                  Select Sizes
+                </h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {getAvailableSizes().map((size) => (
+                    <label
+                      key={size}
+                      className="flex items-center space-x-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        value={size}
+                        checked={data.sizes.includes(size)}
+                        onChange={() => toggleSize(size)}
+                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span className="text-gray-700 font-medium">{size}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+            {/* Image Upload Section */}
+            <div className="mt-6">
+              <h3 className="text-md mb-2  text-gray-800">Upload Product Images</h3>
+              <div
+                {...getRootProps()}
+                className="border-2 border-dashed border-gray-300 rounded-lg p-14 text-center cursor-pointer hover:border-indigo-500 transition"
+              >
+                <input {...getInputProps()} />
+                <p className="text-sm text-gray-500">
+                  Drag and drop images here, or click to select files
+                </p>
+                <em className="text-xs text-gray-400">(Only *.jpeg, *.png, *.jpg, *.gif)</em>
+              </div>
+
+              {/* Preview Selected Images */}
+              {data.product_images.length > 0 && (
+                <div className="mt-4 grid grid-cols-3 gap-4">
+                  {data.product_images.map((base64String, index) => (
+                    <div
+                      key={index}
+                      className="relative w-full h-32 border rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={base64String} // Use the Base64 string directly as the src
+                        alt={`preview-${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+
             </div>
-            <div className="form-group">
-              <button type="submit" className="btn-submit">
+
+            <div className="form-group mt-4">
+              <h3 className="text-md mb-2">Select available colors of the product</h3>
+              <div className="flex items-center space-x-4">
+                {/* Color Picker */}
+                <input
+                  type="color"
+                  value={newColor}
+                  onChange={(e) => setNewColor(e.target.value)}
+                  className="h-12 rounded-lg w-[10%] p-0 border-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => addColor(newColor)}
+                  className="px-4 py-2 bg-orange-400 text-sm tracking-wider text-white rounded"
+                >
+                  Add Color
+                </button>
+              </div>
+
+              {/* Display Selected Colors */}
+              {data.colors.length > 0 && (
+                <div className="mt-4">
+                  <h4>Selected Colors:</h4>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {data.colors.map((color, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 bg-gray-100 p-2 rounded"
+                      >
+                        <div
+                          className="w-5 h-5 rounded-full"
+                          style={{ backgroundColor: color }}
+                        ></div>
+                        <span>{color}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeColor(color)}
+                          className="px-2 py-1 bg-red-500 text-xs tracking-wider  text-white rounded"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+
+            <div className="form-group  mt-10">
+              <button type="submit" className="btn-submit h-12">
                 Add Product
               </button>
             </div>
@@ -171,5 +429,5 @@ export default function AddProduct() {
         </div>
       </div>
     </>
-  )
+  );
 }

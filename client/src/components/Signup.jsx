@@ -2,6 +2,7 @@ import React from "react";
 import { useState} from "react";
 import axios from 'axios'
 import {useNavigate } from 'react-router-dom'
+import Nav from "./nav";
 
 function Signup() {
 
@@ -93,7 +94,7 @@ function Signup() {
 
         try {
             let response = await axios({
-                url: "http://localhost:3000/signup",
+                url: "http://localhost:3003/signup",
                 method: 'POST',
                 headers: {
                     "Content-type": "application/json"
@@ -125,24 +126,15 @@ function Signup() {
 
     return (
         <>
-          {/*
-            This example requires updating your template:
+          <Nav />
+          <div className="signup-bgimg absolute top-0 -z-10 w-full">
+              <img src="images\Hero.webp" alt="" className="w-full" />
+          </div>
+          <div className="flex min-h-full flex-1 flex-col justify-center px-6  lg:px-8">
+           
     
-            ```
-            <html class="h-full bg-white">
-            <body class="h-full">
-            ```
-          */}
-          <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-              <h1 className="text-center tracking-widest text-2xl font-bold text-orange-400">MENX</h1>
-              <h2 className="mt-8 text-center text-lg font-bold tracking-wider text-gray-900">
-                Sign up before continue
-              </h2>
-            </div>
-    
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action="#" method="POST" className="space-y-6" onSubmit={signup}>
+            <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
+              <form action="#" method="POST" className="space-y-3 p-6  rounded-md backdrop-blur-lg border-2 " onSubmit={signup}>
                 <div>
                   <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                     Name
@@ -240,19 +232,14 @@ function Signup() {
                 <div>
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded-md bg-orange-600 p-2.5  text-lg font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="flex w-full justify-center rounded-md bg-orange-600 p-2.5  text-lg font-semibold text-white shadow-sm hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     Sign up
                   </button>
                 </div>
               </form>
     
-              <p className="mt-10 text-center text-sm/6 text-gray-500">
-                Not a member?{' '}
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  Start a 14 day free trial
-                </a>
-              </p>
+              
             </div>
           </div>
         </>

@@ -12,9 +12,10 @@ mongoConnect();
 
 app.use(cors());
 
-app.get("/test", (req,res)=>{
-    console.log("test succesfull")
-})
+app.get("/test", (req, res) => {
+    console.log("test successful");
+    res.send("Test successful"); // Send a response
+  });
 
 app.use(express.static("../client"));
 app.use(express.json({limit : "100mb"}));
