@@ -53,11 +53,15 @@ const Shop = () => {
       }
     };
     loadProducts();
-  }, []);
+  },[]);
+  
+  console.log("allproducts",allProducts);
 
   // Handle main category selection
   const handleCategoryChange = (category) => {
-    setCategories(category);
+    console.log("category:",category);
+    setCategories(()=> category);
+    console.log("categories :",categories);
     setSubcategories(categoryStructure[category] || []);
     setSelectedSubcategories([]);
 
@@ -75,14 +79,19 @@ const Shop = () => {
       console.log("category :",category);
     }
   };
+  console.log("categories after  :",categories);
+  console.log("subcategories :",subcategories);
+
 
   // Handle subcategory selection (multiple selection with checkboxes)
   const toggleSubcategory = (subcategory) => {
-    console.log("selected_subcategories :",selectedSubcategories);
     const updatedSubcategories = selectedSubcategories.includes(subcategory)
       ? selectedSubcategories.filter((sub) => sub !== subcategory) // Deselect subcategory
       : [...selectedSubcategories, subcategory]; // Add new subcategory
     setSelectedSubcategories(updatedSubcategories);
+    console.log("subcategories last :",subcategories);
+    console.log("updated_subcategories :",updatedSubcategories);
+
 
     // Filter products by main category and selected subcategories
     const filtered = allProducts.filter((product) => {
@@ -92,19 +101,23 @@ const Shop = () => {
           ? product.categories.includes(categories)
           : product.category === categories);
 
-      const matchesSubcategories =
-        updatedSubcategories.length === 0 ||
-        updatedSubcategories.some((sub) =>
-          Array.isArray(product.subcategories)
-            ? product.subcategories.includes(sub)
-            : product.subcategory === sub
-        );
-
+          const matchesSubcategories =
+          updatedSubcategories.length === 0 ||
+          updatedSubcategories.some((sub) =>
+            Array.isArray(product.categories)
+              ? product.categories.some((prodSub) => prodSub.trim().toLowerCase() === sub.trim().toLowerCase())
+              : product.category.trim().toLowerCase() === sub.trim().toLowerCase()
+          );
+        
+      console.log("matches_category :",matchesCategory);
+      console.log("matches_subcategory :",matchesSubcategories)
       return matchesCategory && matchesSubcategories;
     });
-
+    
+    console.log("filterd :",filtered);
     setFilteredProducts(filtered);
   };
+
 
   const resetFilters = () => {
     setCategories("All Products");
@@ -169,23 +182,44 @@ const Shop = () => {
         </button>
       </aside>
 
-      <main className="w-full lg:w-3/4 p-6">
-        <h2 className="text-xl font-bold mb-4">Showing products for: {categories}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-white p-4 rounded-lg shadow">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover mb-4"
-              />
-              <h3 className="text-lg font-medium">{product.name}</h3>
-              <p className="text-gray-600 mb-2">{product.description}</p>
-              <p className="text-gray-800 font-semibold">${product.price}</p>
+     
+
+      <div className="main-grid-container w-full lg:w-3/4  flex flex-col items-center  justify-center">
+                <div className="newin-text w-11/12 my-4">
+                    <span className="text-xl newin uppercase">
+                        {categories}
+                    </span>
+                </div>
+                <div className="newin-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center items-center  gap-4  w-11/12">
+                 {filteredProducts.map((product)=> (
+                     <div className="product-card">
+                     <div className="product-image">
+                         <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
+                         <button className="wishlist-btn">
+                             ❤
+                         </button>
+                     </div>
+                     <div className="product-details">
+                         <h3 className="product-name">
+                             {product.name}
+                         </h3>
+                         <p className="product-price">
+                             {product.price}
+                         </p>
+                     </div>
+                     <div className="product-actions">
+                         <button className="add-to-cart flex justify-center gap-1">
+                             <ion-icon name="cart"></ion-icon> Add to Cart
+                         </button>
+                     </div>
+                 </div>
+                 ))}
+                   
+                    
+
+
+                </div>
             </div>
-          ))}
-        </div>
-      </main>
     </div>
   );
 };
