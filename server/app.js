@@ -18,6 +18,7 @@ app.get("/test", (req, res) => {
   });
 
 app.use(express.static("../client"));
+app.use("/upload",express.static("./upload"));
 app.use(express.json({limit : "100mb"}));
 app.use(express.urlencoded({extended : true}));
 
