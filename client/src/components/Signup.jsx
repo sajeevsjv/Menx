@@ -2,7 +2,7 @@ import React from "react";
 import { useState} from "react";
 import axios from 'axios'
 import {useNavigate } from 'react-router-dom'
-import Nav from "./nav";
+
 
 function Signup() {
 
@@ -126,7 +126,7 @@ function Signup() {
 
     return (
         <>
-          <Nav />
+
           <div className="signup-bgimg absolute top-0 -z-10 w-full">
               <img src="images\Hero.webp" alt="" className="w-full" />
           </div>

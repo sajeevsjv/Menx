@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios"
-import Nav from "./nav";
-
+import SellerNavbar from "./SellerNavbar";
 const categoryStructure = {
   Clothing: [
     "T-Shirts & Polos",
@@ -202,7 +201,7 @@ export default function AddProduct() {
 
   return (
     <>
-      <Nav />
+      <SellerNavbar />
       <div className="main-product-form-container mt-[50px] mb-[100px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
         <div className="product-form-container bg-transparent p-4">
           <h2 className="text-center text-md uppercase tracking-[4px] font-medium text-[#ffa333]">

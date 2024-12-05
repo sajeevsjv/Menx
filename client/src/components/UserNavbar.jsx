@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Nav = () => {
+const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
@@ -13,7 +13,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className=" text-black border-b-2 bg-white">
+    <nav className=" text-black bg-white border-b-[1px] p-2 fixed top-0 w-full z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
         <div className="flex items-center justify-between h-12">
           {/* Hamburger Menu Button */}
@@ -43,12 +43,12 @@ const Nav = () => {
               menuOpen ? "block" : "hidden"
             } absolute top-16 left-0 w-full bg-white z-10 border-b-2 lg:hidden `}
           >
-            {["Home", "Products", "Shop", "Contact", "MyShop"].map((tab) => (
+            {["Home", "Products", "Shop", "Contact"].map((tab) => (
               <a
                 key={tab}
                 href="#"
                 className={`block px-4 py-2 overflow-hidden transition-all duration-300 ease-in-out text-xs${
-                  activeTab === tab ? "text-orange-500 text-xs font-semibold" : ""
+                  activeTab === tab ? "text-orange-500 text-xs " : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
               >
@@ -62,9 +62,9 @@ const Nav = () => {
             {["Home", "Products", "Shop", "Contact", "MyShop"].map((tab) => (
               <a
                 key={tab}
-                href="#"
+                href="/sellerhome"
                 className={`nav-link px-1 text-sm tracking-wider py-2 rounded-md hover:text-orange-400 ${
-                  activeTab === tab ? "font-semibold text-orange-400" : ""
+                  activeTab === tab ? "text-orange-400" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
               >
@@ -151,4 +151,4 @@ const Nav = () => {
   );
 };
 
-export default Nav;
+export default UserNavbar;

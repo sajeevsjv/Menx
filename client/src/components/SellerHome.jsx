@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "./nav";
-
+import SellerNavbar from "./SellerNavbar";
 
 function SellerHome() {
     const navigate = useNavigate();
@@ -13,7 +12,7 @@ function SellerHome() {
 
     return (
         <> 
-              <Nav />
+              <SellerNavbar />
             <div className="small-banner">
                 <button className="bg-stone-50 text-black p-2 w-[40%] rounded-sm " onClick={()=>{navigate("/addproduct")}}>Add Product</button>
                 

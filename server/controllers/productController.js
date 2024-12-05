@@ -91,3 +91,11 @@ exports.getAllProducts = async(req, res) => {
     res.status(response.statusCode).send(response);
   }
 }
+
+exports.getSingleProduct = async (req,res) =>{
+  try{
+    let id = body.id;
+    let product = 
+  }
+
+}

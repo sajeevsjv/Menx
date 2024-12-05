@@ -2,7 +2,6 @@ import React from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Nav from './nav';
 
 
 
@@ -119,7 +118,6 @@ const Login = () => {
 
     return (
         <>
-          <Nav/>
             <div className="login-form-container w-full flex justify-center">
                 <form action className="form_main" onSubmit={handleLogin}>
                     <p className="heading">Login</p>
