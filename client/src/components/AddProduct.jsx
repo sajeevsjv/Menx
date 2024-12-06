@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios"
 import SellerNavbar from "./SellerNavbar";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const categoryStructure = {
   Clothing: [
     "T-Shirts & Polos",
@@ -49,8 +52,8 @@ export default function AddProduct() {
     mrp: "",
     price: "",
     colors: "",
-    categories: [], // Holds main categories and selected subcategories
-    product_images: [], // Holds selected product images
+    categories: [], 
+    product_images: [], 
     product_count: 0,
     sizes: []
   });
@@ -187,7 +190,10 @@ export default function AddProduct() {
 
       })
       console.log("response :", response);
-      console.log("message :", response.data.message);
+      let message = response.data.message;
+      // alert(message);
+      toast.success(message);
+
     }
     catch (error) {
       if (error.response) {
@@ -202,7 +208,8 @@ export default function AddProduct() {
   return (
     <>
       <SellerNavbar />
-      <div className="main-product-form-container mt-[50px] mb-[100px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
+      <ToastContainer />
+      <div className="main-product-form-container mt-[100px] mb-[100px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
         <div className="product-form-container bg-transparent p-4">
           <h2 className="text-center text-md uppercase tracking-[4px] font-medium text-[#ffa333]">
             Add Product

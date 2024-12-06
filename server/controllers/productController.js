@@ -49,6 +49,7 @@ exports.addProduct = async (req, res) => {
             message: "product added succesfully"
           })
           res.status(response.statusCode).send(response);
+          return;
         }
         else {
           let response = error_function({
@@ -56,6 +57,7 @@ exports.addProduct = async (req, res) => {
             message: "Failed to add product"
           })
           res.status(response.statusCode).send(response);
+          return;
         }
       }
 
@@ -94,8 +96,26 @@ exports.getAllProducts = async(req, res) => {
 
 exports.getSingleProduct = async (req,res) =>{
   try{
-    let id = body.id;
-    let product = 
+    let _id = req.params.id;
+    let product = await products.findOne({_id})
+    console.log("product :",product);
+    if(product){
+      let response = success_function({
+        statusCode : 200,
+        data : product
+      })
+      res.status(response.statusCode).send(response);
+      return;
+    }
+  }
+  catch(error){
+    console.log("error :",error);
+    let response = success_function({
+      statusCode : 400,
+      message : error.message ? error.message : error
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
   }
 
-}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,7 +60,7 @@ const UserNavbar = () => {
 
           {/* Nav Links for Desktop */}
           <div className="hidden lg:flex gap-2 w-[45%] ">
-            {["Home", "Products", "Shop", "Contact", "MyShop"].map((tab) => (
+            {["Home", "Products", "Shop", "Contact"].map((tab) => (
               <a
                 key={tab}
                 href="/sellerhome"
@@ -99,51 +100,48 @@ const UserNavbar = () => {
                     <ion-icon name="bag-outline" />
 
             {/* Profile Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="hover:text-gray-300  focus:outline-none"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5.121 19.073A6 6 0 0110 21h4a6 6 0 014.879-1.927l1.12-7.446a4 4 0 00-.659-3.65l-1.1-1.1a4 4 0 00-5.657 0l-1.1 1.1a4 4 0 00-.659 3.65l1.12 7.446z"
+            <Menu as="div" className="relative ml-3">
+              <div>
+                <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <span className="absolute -inset-1.5" />
+                  <span className="sr-only">Open user menu</span>
+                  <img
+                    alt=""
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    className="size-7 rounded-full"
                   />
-                </svg>
-              </button>
-              {profileDropdownOpen && (
-                <div className="absolute z-10 right-0 mt-2 bg-white text-black rounded-md shadow-lg w-48">
+                </MenuButton>
+              </div>
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+              >
+                <MenuItem>
                   <a
                     href="#"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    onClick={()=> navigate("/login")}
+                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     SignIn
                   </a>
+                </MenuItem>
+                <MenuItem>
                   <a
                     href="#"
-                    className="block px-4 py-2 hover:bg-gray-100"
-                    onClick={()=> navigate("/signup")}
+                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     SignUp
                   </a>
+                </MenuItem>
+                <MenuItem>
                   <a
                     href="#"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
-                    Logout
+                    Sign out
                   </a>
-                </div>
-              )}
-            </div>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
           </div>
         </div>
       </div>

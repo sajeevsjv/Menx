@@ -3,6 +3,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserNavbar from './UserNavbar';
+
 
 
 const Login = () => {
@@ -85,7 +89,7 @@ const Login = () => {
             console.log("response :", response);
             let message = response.data.message;
             console.log("message : ", message);
-            alert(message);
+            toast.success(message)
 
             const token = response.data.data.token;
             const user_type_fromLogin = response.data.data.user_type;
@@ -105,8 +109,7 @@ const Login = () => {
                 let response = error.response;
                 console.log("response :", response);
                 let message = response.data.message;
-                alert(message);
-            }
+            }   
             else {
                 console.log("error:", error);
             }
@@ -117,8 +120,10 @@ const Login = () => {
     }
 
     return (
-        <>
+        <> 
+           <UserNavbar />
             <div className="login-form-container w-full flex justify-center">
+            <ToastContainer />
                 <form action className="form_main" onSubmit={handleLogin}>
                     <p className="heading">Login</p>
                     <div className="inputContainer">

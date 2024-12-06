@@ -18,6 +18,7 @@ const categoryStructure = {
     "Sweaters",
     "Jackets & Coats",
   ],
+
   Shoes: [
     "Sports Shoes",
     "Formal Shoes",
@@ -30,7 +31,10 @@ const categoryStructure = {
     "Thong Sandals",
     "Boat Shoes",
   ],
-  Accessories: ["Watches", "Jewellery", "Eyewear", "Wallets"],
+  Watches: ["Metallic", "Chronographs", "Leather"],
+  Jewellery: ["Rings", "Bracelets"],
+  Eyewear: ["Sunglasses", "Spectacle Frames"],
+  Wallets: [],
 };
 
 const Shop = () => {
@@ -130,18 +134,18 @@ const Shop = () => {
     setFilteredProducts(allProducts);
   };
 
-  const handleProductCardClick = (id) =>{
+  const handleProductCardClick = (id) => {
     navigate(`/productpage/${id}`)
   }
   return (
     <>
       <UserNavbar />
-      <div className="flex flex-wrap p-6">
+      <div className="flex mt-20 flex-wrap p-6">
         <aside className="w-full md:w-1/4 bg-white p-4 border-r-[1px] border-gray ">
           <div className="mb-6">
-            <h3 className="font-medium text-md md:text-lg ">Browse By</h3>
+            <h3 className="capitalize tracking-widest text-md md:text-lg ">Browse By</h3>
             <ul className="space-y-2 mt-2">
-              {["All Products", "Clothing", "Shoes", "Accessories"].map((category) => (
+              {["All Products", "Clothing", "Shoes", "Accessories", "Jewellery", "Eyewear", "Watches", "Wallets"].map((category) => (
                 <li
                   key={category}
                   className={`cursor-pointer ${categories === category ? "text-orange-400" : "text-gray-700"
@@ -193,22 +197,30 @@ const Shop = () => {
 
         <div className="main-grid-container w-full relative md:w-3/4  flex flex-col gap-4 items-center  justify-center">
           <div className="newin-text w-11/12 my-4 text-center">
-            <span className="text-lg lg:text-xl  text-black font-semibold tracking-wide capitalize">
+            <span className="text-lg capitalize font-semibold lg:text-xl  text-gray-950 tracking-[3px] ">
               {categories}
             </span>
           </div>
           <div className="newin-section grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  justify-center items-center  gap-4  w-11/12">
             {filteredProducts.map((product) => (
-              <div className="product-card" onClick={()=>handleProductCardClick(product._id)}>
+              <div className="product-card" onClick={() => handleProductCardClick(product._id)}>
                 <div className="product-image">
-                  <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
+                  {product.product_images?.length > 0 ? (
+                    <img
+                      src={`http://localhost:3003/${product.product_images[0]}`}
+                      alt="Product Image"
+                    />
+                  ) : (
+                    <p>No Image Available</p>
+                  )}
                   <button className="wishlist-btn">
                     ❤
                   </button>
                 </div>
-                <div className="product-details">
+
+                <div className="product-details h-32">
                   <h3 className="product-name">
-                    {product.name}
+                    {product.name.slice(0,35)}...
                   </h3>
                   <p className="product-price">
                     {product.price}
@@ -225,7 +237,7 @@ const Shop = () => {
             {filteredProducts.length === 0 &&
               <div className="no-data w-[90%]  flex justify-center items-center absolute top-0">
                 <img src="images/9170826.jpg" className="w-[55%]" alt="" />
-              <h3 className="absolute top-10 text-xs tracking-wide text-gray-500">!No products found for current filter</h3>
+                <h3 className="absolute top-10 text-xs tracking-wide text-gray-500">! No products found for current filter</h3>
               </div>
             }
           </div>

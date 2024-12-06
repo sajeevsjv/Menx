@@ -10,5 +10,6 @@ function setaccessControl(access_types){
 }
 
 router.post("/addproduct",setaccessControl("3"),productController.addProduct);
-router.get("/getallproducts",setaccessControl("1,3"),productController.getAllProducts);
+router.get("/getallproducts",setaccessControl("1,2,3"),productController.getAllProducts);
+router.get("/getsingleproduct/:id",setaccessControl("1,2,3"),productController.getSingleProduct);
 module.exports = router;
