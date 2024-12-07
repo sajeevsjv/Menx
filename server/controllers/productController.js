@@ -1,6 +1,7 @@
 const products = require("../db/models/products")
 const mongoose = require("mongoose");
 const { error_function, success_function } = require("../utils/response-handler");
+const users = require("../db/models/users");
 const fileUpload = require("../utils/file-upload").fileUpload;
 
 exports.addProduct = async (req, res) => {
@@ -119,3 +120,58 @@ exports.getSingleProduct = async (req,res) =>{
   }
   }
 
+exports.addToCart = async (req,res) =>{
+  console.log("body :",req.body);
+  let product_id  = new mongoose.Types.ObjectId(req.body.product_id);
+  let user_id = new mongoose.Types.ObjectId(req.body.user_id);
+
+  try{
+
+  const user = await users.findOne({
+    _id: user_id,
+    cart : product_id
+  });
+
+  if(user){
+    let response = error_function({
+      statusCode : 400,
+      message : "Product already in cart"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+
+  let updateuser = await users.updateOne({_id : user_id}, {$addToSet : { cart : product_id}})
+  console.log("updateuser :",updateuser)
+  if(updateuser.modifiedCount > 0){
+    let response = success_function({
+      statusCode : 200,
+      message : "Added to cart"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  else{
+    let response = error_function({
+      statusCode : 400,
+      message : "Failed to add"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  }
+  catch(error){
+    let response = error_function({
+      statusCode : 400,
+      message : error.message ?  error.message : error
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+}
+
+exports.deleteFromCart = (req,res) =>{
+  let body = req.body;
+  let product_id = body.product_id;
+
+}

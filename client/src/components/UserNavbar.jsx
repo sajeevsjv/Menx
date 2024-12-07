@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Route, useNavigate } from "react-router-dom";
 import {Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Link } from "react-router-dom";
+import Shop from "./Shop";
+
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,19 +62,17 @@ const UserNavbar = () => {
           </div>
 
           {/* Nav Links for Desktop */}
-          <div className="hidden lg:flex gap-2 w-[45%] ">
-            {["Home", "Products", "Shop", "Contact"].map((tab) => (
-              <a
-                key={tab}
-                href="/sellerhome"
-                className={`nav-link px-1 text-sm tracking-wider py-2 rounded-md hover:text-orange-400 ${
-                  activeTab === tab ? "text-orange-400" : ""
-                }`}
-                onClick={() => handleTabClick(tab)}
-              >
-                {tab}
-              </a>
-            ))}
+          <div className="hidden lg:flex gap-2 w-[45%] text-sm ">
+          
+           <Link to="/userhome">Home</Link>
+           <Link to="/shop" >Shop</Link>
+           <Link to="shop" >Clothing</Link>
+           <Link to="shop" >Shoes</Link>
+           <Link to="shop" >Jewellery</Link>
+           <Link to="">Contact</Link>
+           
+           
+           
           </div>
 
           {/* Center Text Logo */}
@@ -118,16 +119,16 @@ const UserNavbar = () => {
               >
                 <MenuItem>
                   <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                    href="login"
+                    className="block px-4 py-2 text-sm text-gray-700  hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     SignIn
                   </a>
                 </MenuItem>
                 <MenuItem>
                   <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                    href="signup"
+                    className="block px-4 py-2 text-sm text-gray-700  hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     SignUp
                   </a>
@@ -135,7 +136,7 @@ const UserNavbar = () => {
                 <MenuItem>
                   <a
                     href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                   >
                     Sign out
                   </a>

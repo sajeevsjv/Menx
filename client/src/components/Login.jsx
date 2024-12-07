@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -92,8 +93,10 @@ const Login = () => {
             toast.success(message)
 
             const token = response.data.data.token;
+            const user_id = response.data.data.user_id;
             const user_type_fromLogin = response.data.data.user_type;
             localStorage.setItem("authToken", token);
+            localStorage.setItem("user_id",user_id);
             console.log("localStorage :", localStorage);
             const seller_user_type = "67472a23659bfab478d1ef7d"
             if (user_type_fromLogin === seller_user_type) {
@@ -122,9 +125,9 @@ const Login = () => {
     return (
         <> 
            <UserNavbar />
-            <div className="login-form-container w-full flex justify-center">
+            <div className="login-form-container m-auto w-[80%] md:w-[40%] flex justify-center">
             <ToastContainer />
-                <form action className="form_main" onSubmit={handleLogin}>
+                <form action className="form_main border-[1px] min-h-40 w-[100%]" onSubmit={handleLogin}>
                     <p className="heading">Login</p>
                     <div className="inputContainer">
                         <svg className="inputIcon" xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="#2e2e2e" viewBox="0 0 16 16">
@@ -141,7 +144,7 @@ const Login = () => {
                         <input type="password" className="inputField" id="password" name='password' placeholder="Password" onChange={handleChange} />
                     </div>
                     <button id="button">Submit</button>
-                    <a className="forgotLink" href="#">Forgot your password?</a>
+                    <span>Don't have an account? <Link to={"/signup"}>SignUp</Link></span>
                 </form>
             </div>
         </>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import UserNavbar from "./UserNavbar";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 const categoryStructure = {
   Clothing: [
@@ -43,6 +44,7 @@ const Shop = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [visibleCart, setVisibleCart] = useState([]);
 
   const navigate = useNavigate();
 
@@ -137,9 +139,47 @@ const Shop = () => {
   const handleProductCardClick = (id) => {
     navigate(`/productpage/${id}`)
   }
+
+  const addToCart = async (id) => {
+    const user_id = localStorage.getItem("user_id");
+    const product_id = id;
+    const authToken = localStorage.getItem("authToken");
+
+    try {
+      let response = await axios({
+        method: "POST",
+        url: "http://localhost:3003/addtocart",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        },
+        data: {
+          user_id,
+          product_id
+        }
+      });
+      
+      setVisibleCart((prev) => [...prev,id]);
+      console.log("response :", response);
+      let message = response.data.message;
+      toast.success(message);
+      
+
+    }
+    catch (error) {
+      if (error.response) {
+        let message = error.response.data.message;
+        toast.error(message);
+      }
+      console.log("error :", error);
+    }
+
+  }
+
   return (
     <>
       <UserNavbar />
+      <ToastContainer />
       <div className="flex mt-20 flex-wrap p-6">
         <aside className="w-full md:w-1/4 bg-white p-4 border-r-[1px] border-gray ">
           <div className="mb-6">
@@ -203,8 +243,8 @@ const Shop = () => {
           </div>
           <div className="newin-section grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  justify-center items-center  gap-4  w-11/12">
             {filteredProducts.map((product) => (
-              <div className="product-card" onClick={() => handleProductCardClick(product._id)}>
-                <div className="product-image">
+              <div className="product-card">
+                <div className="product-image" onClick={() => handleProductCardClick(product._id)}>
                   {product.product_images?.length > 0 ? (
                     <img
                       src={`http://localhost:3003/${product.product_images[0]}`}
@@ -219,17 +259,27 @@ const Shop = () => {
                 </div>
 
                 <div className="product-details h-32">
-                  <h3 className="product-name">
-                    {product.name.slice(0,35)}...
+                  <h3 className="product-name cursor-pointer" onClick={() => handleProductCardClick(product._id)} >
+                    {product.name.slice(0, 35)}...
                   </h3>
                   <p className="product-price">
                     {product.price}
                   </p>
                 </div>
                 <div className="product-actions">
-                  <button className="add-to-cart flex justify-center gap-1">
-                    <ion-icon name="cart"></ion-icon> Add to Cart
-                  </button>
+                  {visibleCart.includes(product._id) ? (
+                    <button className="bg-orange-400 rounded-sm text-white p-3 flex justify-center gap-1">
+                      <ion-icon name="cart"></ion-icon> Added to Cart
+                    </button>
+                  ) : (
+                    <button
+                      className="add-to-cart flex justify-center gap-1"
+                      onClick={() => addToCart(product._id)}
+                    >
+                      <ion-icon name="cart"></ion-icon> Add to Cart
+                    </button>
+                  )}
+
                 </div>
               </div>
             ))}
