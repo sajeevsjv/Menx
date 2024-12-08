@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {ToastContainer } from "react-toastify";
 import UserNavbar from "./components/UserNavbar";
 import SellerNavbar from "./components/SellerNavbar";
 import Signup from "./components/signup";
@@ -10,9 +11,11 @@ import SellerHome from "./components/SellerHome";
 import CategorySelector from "./components/Categories";
 import Shop from "./components/Shop";
 import ProductPage from "./components/ProductPage";
+import Cart from "./components/Cart";
 function Routing(){
     return(
         <>
+        <ToastContainer />
         <Router>
             <Routes>
             <Route path={"/"} element={<UserHome />} />
@@ -26,6 +29,7 @@ function Routing(){
             <Route path={"/categories"} element={< CategorySelector />} />
             <Route path={"/shop"} element={<Shop />} />
             <Route path={"/productpage/:id"} element={<ProductPage />} />
+            <Route path={"/cart"} element={<Cart />} />
             </Routes>
         </Router>
         </>

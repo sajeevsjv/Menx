@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import UserNavbar from "./UserNavbar";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
+import { Checkmark } from 'react-checkmark'
 
 const categoryStructure = {
   Clothing: [
@@ -44,7 +45,7 @@ const Shop = () => {
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [visibleCart, setVisibleCart] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
 
   const navigate = useNavigate();
 
@@ -63,7 +64,40 @@ const Shop = () => {
       }
     };
     loadProducts();
+
   }, []);
+
+  useEffect(() => {
+    const loadCart = async () => {
+      console.log("loadcart executed")
+      const user_id = localStorage.getItem("user_id");
+      const authToken = localStorage.getItem("authToken");
+      try {
+        let response = await axios({
+          method: "GET",
+          url: `http://localhost:3003/getsingleuser/${user_id}`,
+          headers: {
+            "Authorization": `Bearer ${authToken}`
+          }
+        })
+
+        console.log("response from 2nd useeefect :", response);
+        let data = response.data.data;
+        console.log("response data :", data);
+        let cart = data.cart.map(item => item.product);
+        setCartItems(cart);
+
+      }
+      catch (error) {
+        if (error.response) {
+          console.log("eror response :", error.response);
+        }
+        console.log("error :", error);
+      }
+    };
+
+    loadCart();
+  }, [])
 
   console.log("allproducts", allProducts);
 
@@ -144,6 +178,7 @@ const Shop = () => {
     const user_id = localStorage.getItem("user_id");
     const product_id = id;
     const authToken = localStorage.getItem("authToken");
+  
 
     try {
       let response = await axios({
@@ -158,12 +193,12 @@ const Shop = () => {
           product_id
         }
       });
-      
-      setVisibleCart((prev) => [...prev,id]);
+
       console.log("response :", response);
       let message = response.data.message;
       toast.success(message);
-      
+      setCartItems((prevCartItems) => [...prevCartItems, id]); // Add the product id to the cart state
+
 
     }
     catch (error) {
@@ -176,10 +211,11 @@ const Shop = () => {
 
   }
 
+  console.log("cartItems :", cartItems);
+
   return (
     <>
       <UserNavbar />
-      <ToastContainer />
       <div className="flex mt-20 flex-wrap p-6">
         <aside className="w-full md:w-1/4 bg-white p-4 border-r-[1px] border-gray ">
           <div className="mb-6">
@@ -263,13 +299,13 @@ const Shop = () => {
                     {product.name.slice(0, 35)}...
                   </h3>
                   <p className="product-price">
-                    {product.price}
+                    ${product.price}
                   </p>
                 </div>
                 <div className="product-actions">
-                  {visibleCart.includes(product._id) ? (
+                  {cartItems.length > 0 && cartItems.includes(product._id) ? (
                     <button className="bg-orange-400 rounded-sm text-white p-3 flex justify-center gap-1">
-                      <ion-icon name="cart"></ion-icon> Added to Cart
+                      <ion-icon name="checkbox"></ion-icon> Added to Cart
                     </button>
                   ) : (
                     <button

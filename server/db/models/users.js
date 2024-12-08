@@ -18,11 +18,18 @@ const users = new mongoose.Schema({
     },
     cart: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "products"
+            product: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Products", 
+            },
+            quantity: {
+                type: Number,
+                required: true,
+                default: 1
+            }
         }
     ]
-
+    
 })
 
 module.exports = mongoose.model("users", users);

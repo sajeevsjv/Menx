@@ -214,4 +214,49 @@ exports.signup = async function (req, res) {
 //   }
 // }
 
+exports.getAllUsers = async(req, res) => {
+  try{
+    let allUsers = await users.find();
+
+    if(allUsers){
+      let response = success_function({
+        statusCode: 200,
+        data : allUsers
+      })
+      res.status(response.statusCode).send(response);
+    }
+  }
+  catch(error){
+    let response = error_function({
+      statusCode: 400,
+      message: error.message ? error.message : error
+    })
+    res.status(response.statusCode).send(response);
+  }
+}
+
+exports.getSingleUser = async (req,res) =>{
+  try{
+    let _id = req.params.id;
+    let user = await users.findOne({_id}).populate("cart.product")
+    if(user){
+      let response = success_function({
+        statusCode : 200,
+        data : user
+      })
+      res.status(response.statusCode).send(response);
+      return;
+    }
+  }
+  catch(error){
+    console.log("error :",error);
+    let response = success_function({
+      statusCode : 400,
+      message : error.message ? error.message : error
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  }
+
 
