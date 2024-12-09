@@ -35,7 +35,7 @@ const Products = mongoose.Schema(
       type: [String],
       required: true,
     },
-    product_count: {
+    stock : { 
       type: Number,
       required: true,
       default: 0,

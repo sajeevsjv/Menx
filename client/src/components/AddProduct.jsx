@@ -54,7 +54,7 @@ export default function AddProduct() {
     colors: "",
     categories: [], 
     product_images: [], 
-    product_count: 0,
+    Stock : 0,
     sizes: []
   });
 
@@ -268,7 +268,7 @@ export default function AddProduct() {
             <div className="form-group">
               <label htmlFor="price">Product Count</label>
               <input type="number"
-                name="product_count"
+                name="stock"
                 min="1"
                 step="1"
                 onChange={handleChange}

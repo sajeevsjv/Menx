@@ -3,7 +3,7 @@ import axios from "axios";
 import UserNavbar from "./UserNavbar";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Checkmark } from 'react-checkmark'
+
 
 const categoryStructure = {
   Clothing: [
@@ -84,7 +84,7 @@ const Shop = () => {
         console.log("response from 2nd useeefect :", response);
         let data = response.data.data;
         console.log("response data :", data);
-        let cart = data.cart.map(item => item.product);
+        let cart = data.cart.map(item => item.product._id);
         setCartItems(cart);
 
       }
@@ -178,6 +178,10 @@ const Shop = () => {
     const user_id = localStorage.getItem("user_id");
     const product_id = id;
     const authToken = localStorage.getItem("authToken");
+    if (!user_id || !authToken) {
+      toast.error("Please login to continue.");
+      return;
+    }
   
 
     try {

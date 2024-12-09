@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Route, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Link } from "react-router-dom";
 import Shop from "./Shop";
-import { ToastContainer, toast, Bounce} from 'react-toastify';
+import { toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -20,19 +20,6 @@ const UserNavbar = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={1000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition={Bounce}
-/>
       <nav className=" text-black bg-white border-b-[1px] p-2 fixed top-0 w-full z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
           <div className="flex items-center justify-between h-12">
@@ -112,7 +99,8 @@ const UserNavbar = () => {
               </div>
 
               <ion-icon name="heart-outline" />
-              <ion-icon name="bag-outline" />
+              <ion-icon name="bag-outline" onClick={()=>navigate("/cart")}/>
+                
 
               {/* Profile Dropdown */}
               <Menu as="div" className="relative ml-3">

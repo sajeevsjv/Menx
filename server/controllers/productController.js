@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const { error_function, success_function } = require("../utils/response-handler");
 const users = require("../db/models/users");
 const fileUpload = require("../utils/file-upload").fileUpload;
+const sendEmail = require("../utils/send-email").sendEmail;
+const 
 
 exports.addProduct = async (req, res) => {
 
@@ -178,7 +180,7 @@ exports.addToCart = async (req,res) =>{
     res.status(response.statusCode).send(response);
     return;
   }
-}
+} 
 
 exports.deleteFromCart = async (req, res) => {
   const product_id = new mongoose.Types.ObjectId(req.params.id); // Ensure product_id is properly converted to ObjectId
@@ -222,4 +224,59 @@ exports.deleteFromCart = async (req, res) => {
     return res.status(response.statusCode).send(response);
   }
 };
+
+exports.placeOrder = async (req, res) => {
+  const cartItems = req.body; // cartItems is an array of { product_id, quantity }
+  const userId = new mongoose.Types.ObjectId(req.params.id);
+
+  console.log("user_id",userId)
+
+  try {
+    // Prepare bulk operations
+    const bulkOperations = cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item._id, stock: { $gte: item.quantity } },
+        update: { $inc: { stock: -item.quantity } },
+      },
+    }));
+
+    const result = await products.bulkWrite(bulkOperations);
+
+    // Check if all updates were successful
+    if (result.matchedCount === cartItems.length && result.modifiedCount === cartItems.length) {
+
+      const updateCart = await users.updateOne(
+        { _id: userId }, // Find user by ID or other identifier
+        { $set: { cart: [] } } // Set the cart to an empty array
+      );
+      console.log("updatecart :",updateCart);
+      if(updateCart.modifiedCount < 1){
+        const response = error_function({
+          statusCode: 400,
+          message: "deleting items from cart failed",
+        });
+        return res.status(response.statusCode).send(response);
+      }
+
+      const response = success_function({
+        statusCode: 200,
+        message: "Your order placed successfully.",
+      });
+      return res.status(response.statusCode).send(response);
+    } else {
+      const response = error_function({
+        statusCode: 400,
+        message: "Some products could not be ordered due to insufficient stock.",
+      });
+      return res.status(response.statusCode).send(response);
+    }
+  } catch (error) {
+    const response = error_function({
+      statusCode: 400,
+      message: error.message || "An error occurred while placing the order.",
+    });
+    return res.status(response.statusCode).send(response);
+  }
+};
+
 

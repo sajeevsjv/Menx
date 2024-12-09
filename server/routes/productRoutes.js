@@ -14,4 +14,5 @@ router.get("/getallproducts",setaccessControl("1,2,3"),productController.getAllP
 router.get("/getsingleproduct/:id",setaccessControl("1,2,3"),productController.getSingleProduct);
 router.post("/addtocart",setaccessControl("2,3"),productController.addToCart);
 router.delete("/deletefromcart/:id",setaccessControl("2,3"),productController.deleteFromCart);
+router.post("/placeorder/:id",setaccessControl("2,3"),productController.placeOrder);
 module.exports = router;
