@@ -4,7 +4,7 @@ const { error_function, success_function } = require("../utils/response-handler"
 const users = require("../db/models/users");
 const fileUpload = require("../utils/file-upload").fileUpload;
 const sendEmail = require("../utils/send-email").sendEmail;
-const 
+const orderPlaced = require("../utils/email-templates/orderPlaced").orderPlaced;
 
 exports.addProduct = async (req, res) => {
 
@@ -209,7 +209,7 @@ exports.deleteFromCart = async (req, res) => {
       return res.status(response.statusCode).send(response);
     } else {
       // No product found to remove
-      const response = error_function({
+      let  response = error_function({
         statusCode: 400,
         message: "Product not found in cart"
       });
@@ -217,7 +217,7 @@ exports.deleteFromCart = async (req, res) => {
     }
   } catch (error) {
     // Handle any error that occurred during the update operation
-    const response = error_function({
+    let  response = error_function({
       statusCode: 500,
       message: "Failed to remove the product due to server error"
     });
@@ -228,8 +228,6 @@ exports.deleteFromCart = async (req, res) => {
 exports.placeOrder = async (req, res) => {
   const cartItems = req.body; // cartItems is an array of { product_id, quantity }
   const userId = new mongoose.Types.ObjectId(req.params.id);
-
-  console.log("user_id",userId)
 
   try {
     // Prepare bulk operations
@@ -244,36 +242,56 @@ exports.placeOrder = async (req, res) => {
 
     // Check if all updates were successful
     if (result.matchedCount === cartItems.length && result.modifiedCount === cartItems.length) {
-
       const updateCart = await users.updateOne(
-        { _id: userId }, // Find user by ID or other identifier
-        { $set: { cart: [] } } // Set the cart to an empty array
+        { _id: userId }, 
+        { $set: { cart: [] } }
       );
-      console.log("updatecart :",updateCart);
-      if(updateCart.modifiedCount < 1){
-        const response = error_function({
+
+      console.log("Cart update response:", updateCart);
+
+      if (updateCart.modifiedCount < 1) {
+        let response = error_function({
           statusCode: 400,
-          message: "deleting items from cart failed",
+          message: "Failed to clear items from the cart.",
         });
         return res.status(response.statusCode).send(response);
       }
 
-      const response = success_function({
+      // Attempt email sending
+      try {
+        const user = await users.findOne({ _id: userId });
+        const user_name = user.name;
+        const user_email = user.email;
+        const content = await orderPlaced(user_name, cartItems);
+
+        await sendEmail(user_email, "Order placed successfully", content);
+      } catch (emailError) {
+        console.error("Email sending failed:", emailError.message);
+        let response = error_function({
+          statusCode: 400,
+          message: "Order placed, but failed to send confirmatiom mail.",
+        });
+        return res.status(response.statusCode).send(response);
+      }
+
+      // Success response
+      let response = success_function({
         statusCode: 200,
-        message: "Your order placed successfully.",
+        message: "Your order was placed successfully.",
       });
       return res.status(response.statusCode).send(response);
     } else {
-      const response = error_function({
+      let response = error_function({
         statusCode: 400,
         message: "Some products could not be ordered due to insufficient stock.",
       });
       return res.status(response.statusCode).send(response);
     }
   } catch (error) {
-    const response = error_function({
+    console.error("Error in placing the order:", error.message);
+    let response = error_function({
       statusCode: 400,
-      message: error.message || "An error occurred while placing the order.",
+      message: "An error occurred while placing the order.",
     });
     return res.status(response.statusCode).send(response);
   }

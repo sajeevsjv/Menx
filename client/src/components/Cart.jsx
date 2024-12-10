@@ -101,9 +101,9 @@ const Cart = () => {
       let message = response.data.message;
       toast.success(message);
 
-     setTimeout(() => {
-          navigate("/shop");
-      }, 2000); 
+    //  setTimeout(() => {
+    //       navigate("/shop");
+    //   }, 2000); 
        
       
       
