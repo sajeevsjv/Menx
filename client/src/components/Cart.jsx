@@ -85,6 +85,8 @@ const Cart = () => {
   async function placeOrder(cartItems){
     const user_id = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("authToken");
+    const processingToast = toast.loading("Processing your order...");
+
     try {
       let response = await axios({
         method: "POST",
@@ -99,22 +101,38 @@ const Cart = () => {
       let data = response.data.data;
       console.log("response data :", data);
       let message = response.data.message;
-      toast.success(message);
 
-    //  setTimeout(() => {
-    //       navigate("/shop");
-    //   }, 2000); 
+      toast.update(processingToast, {
+        render: message,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000
+      });
+
+     setTimeout(() => {
+          navigate("/shop");
+      }, 2000); 
        
-      
-      
+ 
     }
     catch (error) {
       if (error.response) {
         console.log("eror response :", error.response);
         let message = error.response.data.message;
-        toast.error(message);
+        toast.update(processingToast, {
+          render: message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       }
       console.log("error :", error);
+      toast.update(processingToast, {
+        render: "An unexpected error occurred.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     }
 
   }

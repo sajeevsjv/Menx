@@ -1,43 +1,11 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios"
 import SellerNavbar from "./SellerNavbar";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const categoryStructure = {
-  Clothing: [
-    "T-Shirts & Polos",
-    "Shirts",
-    "Trousers",
-    "Jeans",
-    "Innerwear",
-    "Sportswear",
-    "Sleep & Lounge Wear",
-    "Ethnic Wear",
-    "Ties, Socks & Belts",
-    "Suits & Blazers",
-    "Sweaters",
-    "Jackets & Coats",
-  ],
-
-  Shoes: [
-    "Sports Shoes",
-    "Formal Shoes",
-    "Casual Shoes",
-    "Sneakers",
-    "Loafers & Moccasins",
-    "Flip-Flops",
-    "Boots",
-    "Sandals & Floaters",
-    "Thong Sandals",
-    "Boat Shoes",
-  ],
-  Watches: ["Metallic", "Chronographs", "Leather"],
-  Jewellery: ["Rings", "Bracelets"],
-  Eyewear: ["Sunglasses", "Spectacle Frames"],
-  Wallets: [],
-};
 
 const sizeOptions = {
   Clothing: ["SM", "M", "L", "XL", "2XL", "3XL"],
@@ -58,7 +26,48 @@ export default function AddProduct() {
     sizes: []
   });
 
+
+  const [categoryStructure, setCategoryStructure] = useState({});
   const [newColor, setNewColor] = useState("#000000"); // Temporary color input state
+
+
+  useEffect(()=>{
+    const loadCategories = async () => {
+      console.log("loadcart executed")
+      const authToken = localStorage.getItem("authToken");
+      try {
+        let response = await axios({
+          method: "GET",
+          url: `http://localhost:3003/categories`,
+          headers: {
+            "Authorization": `Bearer ${authToken}`
+          }
+        })
+
+        console.log("response  :", response);
+        let categoryData = response.data.data;
+        console.log("categoryData:", categoryData);
+         // Transform fetched categories into the desired structure
+         const transformedCategories = categoryData.reduce((acc, category) => {
+          acc[category.category] = category.sub_categories || [];
+          return acc;
+        }, {});
+
+        console.log("Transformed categories: ", transformedCategories);
+        setCategoryStructure(transformedCategories);
+
+      }
+      catch (error) {
+        if (error.response) {
+          console.log("eror response :", error.response);
+          let message = error.response.data.message;
+        }
+        console.log("error :", error);
+      }
+    };
+
+    loadCategories();
+  },[])
 
   const addColor = (color) => {
     if (!data.colors.includes(color)) {

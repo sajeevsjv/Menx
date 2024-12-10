@@ -9,6 +9,7 @@ function setaccessControl(access_types){
     }
 }
 
+router.get("/categories",setaccessControl("1,2,3"),productController.loadCategories)
 router.post("/addproduct",setaccessControl("3"),productController.addProduct);
 router.get("/getallproducts",setaccessControl("1,2,3"),productController.getAllProducts);
 router.get("/getsingleproduct/:id",setaccessControl("1,2,3"),productController.getSingleProduct);

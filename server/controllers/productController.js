@@ -2,9 +2,32 @@ const products = require("../db/models/products")
 const mongoose = require("mongoose");
 const { error_function, success_function } = require("../utils/response-handler");
 const users = require("../db/models/users");
+const categories = require("../db/models/categories");
 const fileUpload = require("../utils/file-upload").fileUpload;
 const sendEmail = require("../utils/send-email").sendEmail;
 const orderPlaced = require("../utils/email-templates/orderPlaced").orderPlaced;
+
+
+
+exports.loadCategories = async (req,res) => {
+  const allcategories = await categories.find();
+  if(categories){
+    let response = success_function({
+      statusCode: 200,
+      data : allcategories
+    });
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  else{
+    let response = error_function({
+      statusCode: 400,
+      message: 'failed to get categories',
+    });
+    res.status(response.statusCode).send(response);
+    return;
+  }
+}
 
 exports.addProduct = async (req, res) => {
 
@@ -246,7 +269,7 @@ exports.placeOrder = async (req, res) => {
         { _id: userId }, 
         { $set: { cart: [] } }
       );
-gi
+
 
       if (updateCart.modifiedCount < 1) {
         let response = error_function({

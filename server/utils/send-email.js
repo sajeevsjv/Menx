@@ -18,7 +18,7 @@ exports.sendEmail = async function (emails, subject, content) {
 
       // send mail with defined transport object
       let info = await transporter.sendMail({
-        from: '"Pomograd" <support@pomograd.ru>', // sender address
+        from: '"Menx.com" <support@menx.ru>', // sender address
         to: emails, // list of receivers
         subject: subject, // Subject line
         html: content, // html body
