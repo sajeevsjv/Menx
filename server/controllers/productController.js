@@ -246,8 +246,7 @@ exports.placeOrder = async (req, res) => {
         { _id: userId }, 
         { $set: { cart: [] } }
       );
-
-      console.log("Cart update response:", updateCart);
+gi
 
       if (updateCart.modifiedCount < 1) {
         let response = error_function({
