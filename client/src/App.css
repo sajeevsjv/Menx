@@ -374,22 +374,14 @@ input::placeholder{
 }
 .bgimage{
     position: relative;
-    height: 100%;
+    height: fit-content;
+    z-index: 1  
+}
+.bgimage img{
     width: 100%;
-    z-index: 1;
-  
-    
-    
+    height: 40%;
 }
-.ads-container{
-    position: absolute;
-    top: 5%;
-    display: grid;
-    z-index: -1;
-    grid-template-columns: repeat(2, 40%);
-    justify-content: space-between;
-    gap: 30px;
-}
+
 .ad1{
     border-bottom: 8px solid #cf9663;
     border-right: 8px solid #cc7f3c ;
@@ -397,15 +389,20 @@ input::placeholder{
 }
 .ad2{
     border-bottom: 8px solid #cf9663;
-    border-left: 8px solid red ;
+    border-left: 8px solid #cc7f3c ;
     border-radius: 30px;
 }
-.ad img{
+.ad2 img{
     border-radius: 20px;
 }
 .banner{
     position: absolute;
-    top: 50%;
+    height: 50%;
+    width: 100%;
+    border-top :8px solid #dd975a ;
+    border-radius: 10px;
+}
+.banner{
     height: 50%;
     width: 100%;
     border-top :8px solid #dd975a ;
@@ -513,10 +510,8 @@ ion-icon{
     text-align: center;
 }
 .slogan span{
-    font-size: 20px;
-    font-weight: 100;
     letter-spacing: 4px;
-    color: rgb(66, 66, 66);
+    color: rgb(78, 78, 78);
 }
 
 

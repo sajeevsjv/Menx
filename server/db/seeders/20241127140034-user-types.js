@@ -8,7 +8,7 @@ module.exports = {
       return models.user_types.insertMany([
        {
         _id : "67472a0c659bfab478d1ef7c",
-        user_type : "user" 
+        user_type : "buyer" 
        },
        {
         _id : "67472a23659bfab478d1ef7d",

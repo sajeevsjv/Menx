@@ -41,6 +41,11 @@ const Products = mongoose.Schema(
       default: 0,
       min: 0,
     },
+    seller : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref  : "users"
+
+    }
   },
   { timestamps: true } 
 );

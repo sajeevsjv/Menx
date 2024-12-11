@@ -12,6 +12,8 @@ import CategorySelector from "./components/Categories";
 import Shop from "./components/Shop";
 import ProductPage from "./components/ProductPage";
 import Cart from "./components/Cart";
+import Carousel from "./components/Carousel";
+import TestCarousel from "./components/TestCarousel";
 function Routing(){
     return(
         <>
@@ -30,6 +32,8 @@ function Routing(){
             <Route path={"/shop"} element={<Shop />} />
             <Route path={"/productpage/:id"} element={<ProductPage />} />
             <Route path={"/cart"} element={<Cart />} />
+            <Route path={"/carousel"} element={<Carousel />} />
+            <Route path={"/testcarousel"} element={<TestCarousel />} />
             </Routes>
         </Router>
         </>
