@@ -14,6 +14,7 @@ import ProductPage from "./components/ProductPage";
 import Cart from "./components/Cart";
 import Carousel from "./components/Carousel";
 import TestCarousel from "./components/TestCarousel";
+import Offcanvas from "./components/Offcanvas";
 function Routing(){
     return(
         <>
@@ -34,6 +35,7 @@ function Routing(){
             <Route path={"/cart"} element={<Cart />} />
             <Route path={"/carousel"} element={<Carousel />} />
             <Route path={"/testcarousel"} element={<TestCarousel />} />
+            <Route path={"/offcanvas"} element={<Offcanvas />} />
             </Routes>
         </Router>
         </>

@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 
 const Carousel = () => {
   const images = [
-    "./images/freepik-export-20241118061906wRTB.jpeg",
-    "./images/freepik-export-20241118055251kHs1.jpeg",
-    "./images/mayagi_fashion_pgotograpghy_of_a_25_yo_queer_man_standing_again_e15ef361-7698-4369-9eb9-13.webp",
-    "./images/Hero.webp",
+    "./images/freepik16-9-export-20241118055251kHs1.jpeg",
+    "./images/freepik16-9-export-20241118061906wRTB.jpeg",
+    "",
+    "",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,7 +65,7 @@ const Carousel = () => {
       {/* Carousel Images */}
       <div className="overflow-hidden rounded-lg h-full">
         <div
-          className="flex transition-transform duration-500 h-full"
+          className="flex transition-transform duration-500 h-[100%]"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {images.map((image, index) => (
@@ -82,13 +82,13 @@ const Carousel = () => {
       {/* Navigation Buttons */}
       <button
         onClick={handlePrev}
-        className="absolute z-50 top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 focus:outline-none"
+        className="absolute z-50 top-1/2 left-2 transform -translate-y-1/2 text-2xl  text-gray-300 font-bold p-2 rounded-full focus:outline-none"
       >
         &#8249;
       </button>
       <button
         onClick={handleNext}
-        className="absolute z-50 top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 focus:outline-none"
+        className="absolute z-50 top-1/2 right-2 transform text-2xl -translate-y-1/2  text-gray-300 font-bold p-2 rounded-full focus:outline-none"
       >
         &#8250;
       </button>

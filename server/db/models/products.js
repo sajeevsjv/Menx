@@ -45,7 +45,11 @@ const Products = mongoose.Schema(
       type : mongoose.Schema.Types.ObjectId,
       ref  : "users"
 
-    }
+    },
+    adress : [{
+       type : Array,
+     
+    }]
   },
   { timestamps: true } 
 );
