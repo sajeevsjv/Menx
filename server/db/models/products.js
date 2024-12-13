@@ -46,10 +46,6 @@ const Products = mongoose.Schema(
       ref  : "users"
 
     },
-    adress : [{
-       type : Array,
-     
-    }]
   },
   { timestamps: true } 
 );

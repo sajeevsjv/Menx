@@ -2,12 +2,18 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { DataContext } from "./DataProvider";
 
 
 const Cart = () => {
   // Sample cart data
   const [cartItems, setCartItems] = useState([]);
   const [quantities, setQuantities] = useState([]);
+
+  // userdata from context
+  const {userData, setUserData} = useContext(DataContext);
+  console.log("userdata from context : ",userData);
 
   const navigate = useNavigate();
   

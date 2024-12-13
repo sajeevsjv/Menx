@@ -1,12 +1,15 @@
 import Routing from "./Routing";
 import './App.css'
 import '../index.css'
+import DataProvider from "./components/DataProvider";
 
 
-function App(){
-  return(
+function App() {
+  return (
     <>
-    <Routing/>
+      <DataProvider>
+        <Routing />
+      </DataProvider>
     </>
   )
 }

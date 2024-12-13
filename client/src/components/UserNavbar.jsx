@@ -2,17 +2,63 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Link } from "react-router-dom";
-import Shop from "./Shop";
-import { toast} from 'react-toastify';
+import { FaUserCircle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useEffect } from "react";
+import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
+import { useContext } from "react";
+import { DataContext } from "./DataProvider";
 
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Home");
   const navigate = useNavigate();
-  
- 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOffcanvas = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const { userData, setUserData, showShippingForm, setShowShippingForm } = useContext(DataContext);
+
+  function toggleshippingform(){
+    setShowShippingForm(!showShippingForm);
+  }
+
+  useEffect(() => {
+    const user_id = localStorage.getItem("user_id");
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      const loadUser = async () => {
+        axios({
+          url: `http://localhost:3003/getsingleuser/${user_id}`,
+          headers: {
+            "Authorization": `Bearer ${authToken}`
+          }
+        })
+          .then((response) => {
+            console.log("response :", response);
+            const userdata = response.data.data;
+            setUserData(userdata);
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.log("error response :", error.response);
+            }
+            else {
+              console.log("error :", error);
+            }
+          })
+      }
+      loadUser();
+    }
+
+  }, [])
+
+
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     setMenuOpen(false); // Close menu on mobile when a link is clicked
@@ -99,8 +145,8 @@ const UserNavbar = () => {
               </div>
 
               <ion-icon name="heart-outline" />
-              <ion-icon name="bag-outline" onClick={()=>navigate("/cart")}/>
-                
+              <div className="flex justify-center items-center"><ion-icon name="bag-outline" onClick={() => navigate("/cart")} /><div className="mb-3 text-red"><img src="./images/circle.png" className="size-[7px]" alt="" /></div></div>
+
 
               {/* Profile Dropdown */}
               <Menu as="div" className="relative ml-3">
@@ -119,39 +165,103 @@ const UserNavbar = () => {
                   transition
                   className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                 >
-                  <MenuItem>
-                    <a
-                      href="login"
-                      className="block px-4 py-2 text-sm text-gray-700  hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                    >
-                      SignIn
-                    </a>
-                  </MenuItem>
-                  <MenuItem>
-                    <a
-                      href="signup"
-                      className="block px-4 py-2 text-sm text-gray-700  hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                    >
-                      SignUp
-                    </a>
-                  </MenuItem>
-                  { localStorage.getItem("authToken") && 
-                  <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                    onClick={handleSignOut}
-                  >
-                    Sign out
-                  </a>
-                </MenuItem>
-                  } 
+                  {localStorage.getItem("authToken") ?
+                    (
+                      <>
+
+                        <MenuItem>
+                          <span
+                            onClick={toggleOffcanvas}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+
+                          >
+                            My Profile
+                          </span>
+                        </MenuItem>
+                        <MenuItem>
+                          <span
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                            onClick={handleSignOut}
+
+                          >
+                            <Link to={"login"}>Sign Out</Link>
+                          </span>
+                        </MenuItem>
+                      </>
+                    )
+                    :
+                    (
+                      <>
+                        <MenuItem>
+                          <span
+
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+
+                          >
+                            <Link to={"/login"}>Sign In</Link>
+                          </span>
+                        </MenuItem>
+                        <MenuItem>
+                          <span
+
+                            className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+
+                          >
+                            <Link to={"/signup"}>Sign Up</Link>
+                          </span>
+                        </MenuItem>
+                      </>
+                    )
+                  }
                 </MenuItems>
               </Menu>
             </div>
           </div>
         </div>
       </nav>
+      {/* Offcanvas Menu */}
+      <div
+        className={`fixed top-0 right-0 h-full w-1/4 bg-white text-black transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+          } shadow-lg z-50`}
+      >
+        <div className="p-3 bg-[#dbb485] rounded-xs">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <FaUserCircle className="text-gray-500 text-4xl" />
+              {userData ?
+                <div className="ml-3">
+                  <h2 className="text-lg text-white">{userData.name}</h2>
+                  <p className="text-sm tracking-wider  text-white">{userData.email}</p>
+                </div>
+                : <h3>loading...</h3>
+              }
+            </div>
+            <div className="closebtn text-2xl"><button onClick={toggleOffcanvas}><ion-icon className="text-3xl" name="close-outline"></ion-icon></button></div>
+          </div>
+        </div>
+        <ul className="p-5 space-y-6">
+          <li className="flex items-center gap-2 text-md"> <ion-icon name="cart-outline"></ion-icon><Link to={"/cart"}>Cart</Link></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="heart-outline"></ion-icon> <Link to={"/cart"}> Wishlist</Link></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="pricetags-outline"></ion-icon> <Link to={"/cart"}>Orders</Link></li>
+          <li><div className="divider h-[1px] w-full bg-slate-200"></div></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="location-outline"></ion-icon> <Link to={"/shippingform"}>Saved Adresses</Link></li>
+          {userData?.address?.length > 0
+            ? userData.address.map((adr, index) => (
+              <p key={index} className="text-sm ml-5">{adr.address}</p>
+            ))
+            : 
+            null}
+
+      
+              <button onClick={toggleshippingform} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
+                <ion-icon name="add-outline"></ion-icon> Add new address
+              </button>
+          
+
+          <li><div className="divider h-[1px] w-full bg-slate-200"></div></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="arrow-up-circle-outline"></ion-icon> <Link to={"/cart"}>Upgrade to Seller Account</Link></li>
+        </ul>
+      </div>
     </>
   );
 };
@@ -160,18 +270,7 @@ const handleSignOut = () => {
   localStorage.removeItem("authToken");
   const token = localStorage.getItem("authToken");
   if (!token) {
-    toast.success('succesfully loggedout', {
-      position: "top-center",
-      autoClose: 1000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "colored",
-      style: { backgroundColor: "#eab676", color: "#fff" },
-      transition: Bounce,
-      });
+    toast.success('succesfully loggedout');
   } else {
     toast.error("Failed to logout");
   }

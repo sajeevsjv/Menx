@@ -29,7 +29,7 @@ exports.signup = async function (req, res) {
     if(usertype){
       body.user_type = usertype._id;
     }
-
+    
     if (count > 0) {
       let response = error_function({
         statusCode: 400,
@@ -259,4 +259,27 @@ exports.getSingleUser = async (req,res) =>{
   }
   }
 
-
+exports.setShippingAdress = async (req,res) => {
+  let addressData = req.body
+  console.log("addressData :", addressData);
+  const user_id = new mongoose.Types.ObjectId(req.params.id);
+  
+  let updateuser = await users.updateOne(
+    { _id: user_id }, 
+    { $push: { address: addressData } } // Use $push to append to the array
+  );
+  if(updateuser){
+    let response = success_function({
+      statusCode : 200,
+      message : "adress added sucessfully"
+    })
+    return res.status(response.statusCode).send(response);
+  }
+  else{
+      let response = error_function({
+        statusCode : 400,
+        message : "adress added sucessfully"
+      })
+      return res.status(response.statusCode).send(response);
+  }
+}

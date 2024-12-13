@@ -15,6 +15,8 @@ import Cart from "./components/Cart";
 import Carousel from "./components/Carousel";
 import TestCarousel from "./components/TestCarousel";
 import Offcanvas from "./components/Offcanvas";
+import ShippingForm from "./components/ShippingForm";
+import MyShop from "./components/MyShop";
 function Routing(){
     return(
         <>
@@ -27,7 +29,7 @@ function Routing(){
             <Route path={"/login"} element= {<Login />} />
             <Route path={"/userhome"} element={<UserHome />} />
             <Route path={"/sellerhome"} element={<SellerHome />} />
-            <Route path={"/sellernavbar"} element={<SellerNavbar />}/>
+            <Route path={"/sellernavbar"} element={<SellerNavbar />} />
             <Route path={"/addproduct"} element={< AddProduct />} />
             <Route path={"/categories"} element={< CategorySelector />} />
             <Route path={"/shop"} element={<Shop />} />
@@ -36,6 +38,8 @@ function Routing(){
             <Route path={"/carousel"} element={<Carousel />} />
             <Route path={"/testcarousel"} element={<TestCarousel />} />
             <Route path={"/offcanvas"} element={<Offcanvas />} />
+            <Route path={"/shippingform"} element={<ShippingForm />} />
+            <Route path={"/myshop"} element={<MyShop />} />
             </Routes>
         </Router>
         </>

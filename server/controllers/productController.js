@@ -39,8 +39,12 @@ exports.addProduct = async (req, res) => {
   let price = body.price;
   let product_images = body.product_images;
   let categories = body.categories;
-
-
+   
+  let user_id = body.seller;
+  console.log("seller id :",user_id);
+  let userId = new mongoose.Types.ObjectId(body.seller);
+  body.seller = userId;
+  
   if (product_images && product_images.length > 0) {
     let regExp = /^data:/;
 
