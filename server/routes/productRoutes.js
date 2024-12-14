@@ -17,4 +17,5 @@ router.post("/addtocart",setaccessControl("2,3"),productController.addToCart);
 router.delete("/deletefromcart/:id",setaccessControl("2,3"),productController.deleteFromCart);
 router.post("/placeorder/:id",setaccessControl("2,3"),productController.placeOrder);
 router.get("/sellerproducts/:id",setaccessControl("3"),productController.sellerProducts);
+router.get("/lowstockproducts/:id",setaccessControl("3"),productController.lowStockProducts);
 module.exports = router;

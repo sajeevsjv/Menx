@@ -141,8 +141,9 @@ exports.getSingleProduct = async (req,res) =>{
 
 
 exports.sellerProducts = async (req,res) =>{
-  let userId = new mongoose.Types.ObjectId(req.params.user_id);
+  let userId = new mongoose.Types.ObjectId(req.params.id);
   const sellerProducts = await products.find({seller : userId});
+  console.log("sellerproducts :",sellerProducts);
   if(sellerProducts){
     let response = success_function({
       statusCode : 200,
@@ -155,6 +156,27 @@ exports.sellerProducts = async (req,res) =>{
     let response = error_function({
       statusCode : 400,
       message : "failed get seller products"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+}
+
+exports.lowStockProducts = async (req,res) =>{
+  let userId = new mongoose.Types.ObjectId(req.params.id);
+  const lowstockproducts = await products.find({seller : userId,stock: { $lt: 10 }});
+  if(lowstockproducts){
+    let response = success_function({
+      statusCode : 200,
+      data : lowstockproducts
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  else{
+    let response = error_function({
+      statusCode : 400,
+      message : "failed get lowstock products"
     })
     res.status(response.statusCode).send(response);
     return;
