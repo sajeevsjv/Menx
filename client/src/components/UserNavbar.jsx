@@ -16,6 +16,7 @@ const UserNavbar = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [visibleSellerControls, setVisibleSellerControls] = useState(false);
 
   const toggleOffcanvas = () => {
     setIsOpen(!isOpen);
@@ -26,6 +27,14 @@ const UserNavbar = () => {
   function toggleshippingform(){
     setShowShippingForm(!showShippingForm);
   }
+
+  useEffect(()=>{
+    const seller_user_type = "67472a23659bfab478d1ef7d"
+    const user_type = localStorage.getItem("user_type");
+    if(user_type === seller_user_type){
+        setVisibleSellerControls(true);
+    }
+},[])
 
   useEffect(() => {
     const user_id = localStorage.getItem("user_id");
@@ -117,6 +126,9 @@ const UserNavbar = () => {
               <Link to="shop" >Shoes</Link>
               <Link to="shop" >Jewellery</Link>
               <Link to="">Contact</Link>
+              {visibleSellerControls &&
+               <Link to="/myshop">MyShop</Link> 
+               }
 
 
 
@@ -252,14 +264,15 @@ const UserNavbar = () => {
             : 
             null}
 
-      
               <button onClick={toggleshippingform} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
                 <ion-icon name="add-outline"></ion-icon> Add new address
               </button>
           
 
           <li><div className="divider h-[1px] w-full bg-slate-200"></div></li>
+          {!visibleSellerControls &&
           <li className="flex items-center gap-2 text-md"><ion-icon name="arrow-up-circle-outline"></ion-icon> <Link to={"/cart"}>Upgrade to Seller Account</Link></li>
+          }
         </ul>
       </div>
     </>

@@ -30,78 +30,68 @@ exports.loadCategories = async (req,res) => {
 }
 
 exports.addProduct = async (req, res) => {
-
-  let body = req.body;
-  console.log("body :", body);
-  let name = body.name;
-  let description = body.description;
-  let seller_name = body.seller_name;
-  let price = body.price;
-  let product_images = body.product_images;
-  let categories = body.categories;
-   
-  let user_id = body.seller;
-  console.log("seller id :",user_id);
-  let userId = new mongoose.Types.ObjectId(body.seller);
-  body.seller = userId;
+  const { name, description, price, product_images, categories, seller } = req.body;
+  const body = req.body;
   
-  if (product_images && product_images.length > 0) {
-    let regExp = /^data:/;
 
-    // Use a separate array to store uploaded image paths
-    let uploadedImagePaths = [];
-    try {
-      for (let base64 of product_images) {
-        if (regExp.test(base64)) {
-          // Await the fileUpload for each Base64 string
-          let img_path = await fileUpload(base64, "products");
-          console.log("img_path:", img_path);
-
-          // Add the uploaded image path to the new array
-          uploadedImagePaths.push(img_path);
-        } else {
-          // Handle invalid Base64 string
-          let response = error_function({
-            statusCode: 400,
-            message: 'Invalid Base64 string',
-          });
-          res.status(response.statusCode).send(response);
-          return;
-        }
-
-        // Set body.product_images to the array of uploaded paths
-        body.product_images = uploadedImagePaths;
-
-        let addProduct = await products.create(body);
-        if (addProduct) {
-          let response = success_function({
-            statusCode: 200,
-            message: "product added succesfully"
-          })
-          res.status(response.statusCode).send(response);
-          return;
-        }
-        else {
-          let response = error_function({
-            statusCode: 400,
-            message: "Failed to add product"
-          })
-          res.status(response.statusCode).send(response);
-          return;
-        }
-      }
-
-    }
-    catch (error) {
-      let response = error_function({
-        statusCode: 400,
-        message: error.message ? error.message : error
-      })
-      res.status(response.statusCode).send(response);
-    }
-
+  // Validate required fields
+  if (!name || !description || !seller || !price || !product_images || !categories) {
+    return res.status(400).send({
+      statusCode: 400,
+      message: "Missing required fields.",
+    });
   }
-}
+
+  try {
+    const userId = new mongoose.Types.ObjectId(seller);
+    body.seller = userId;
+
+
+    // Validate and process product images
+    const regExp = /^data:/;
+    const uploadedImagePaths = [];
+
+    if (Array.isArray(product_images)) {
+      for (const base64 of product_images) {
+        if (!regExp.test(base64)) {
+          return res.status(400).send({
+            statusCode: 400,
+            message: "Invalid Base64 string.",
+          });
+        }
+        const img_path = await fileUpload(base64, "products");
+        uploadedImagePaths.push(img_path);
+      }
+    } else {
+      return res.status(400).send({
+        statusCode: 400,
+        message: "Invalid or missing product_images field.",
+      });
+    }
+
+    // Construct the product payload
+   body.product_images = uploadedImagePaths;
+
+    // Create the product
+    const addProduct = await products.create(body);
+
+    if (addProduct) {
+      return res.status(200).send({
+        statusCode: 200,
+        message: "Product added successfully.",
+      });
+    } else {
+      throw new Error("Failed to add product.");
+    }
+  } catch (error) {
+    console.error("Error adding product:", error);
+    return res.status(500).send({
+      statusCode: 500,
+      message: error.message || "Internal Server Error.",
+    });
+  }
+};
+
 
 exports.getAllProducts = async(req, res) => {
   try{
@@ -148,6 +138,29 @@ exports.getSingleProduct = async (req,res) =>{
     return;
   }
   }
+
+
+exports.sellerProducts = async (req,res) =>{
+  let userId = new mongoose.Types.ObjectId(req.params.user_id);
+  const sellerProducts = await products.find({seller : userId});
+  if(sellerProducts){
+    let response = success_function({
+      statusCode : 200,
+      data : sellerProducts
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  else{
+    let response = error_function({
+      statusCode : 400,
+      message : "failed get seller products"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+}
+
 
 exports.addToCart = async (req,res) =>{
   console.log("body :",req.body);

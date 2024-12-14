@@ -1,6 +1,40 @@
 import React from "react";
+import { useEffect } from "react";
 
 function MyShop(){
+
+
+useEffect(()=>{
+  loadMyProducts = async ()=>{
+    const user_id = localStorage.getItem("user_id");
+    const authToken = localStorage.getItem("authToken");
+    try {
+      let response = await axios({
+        method: "GET",
+        url: `http://localhost:3003/getsingleuser/${user_id}`,
+        headers: {
+          "Authorization": `Bearer ${authToken}`
+        }
+      })
+
+      console.log("response from 2nd useefect :", response);
+      let data = response.data.data;
+      console.log("response data :", data);
+      let cartWithQuantities = data.cart.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      setCartItems(cartWithQuantities);
+    }
+    catch (error) {
+      if (error.response) {
+        console.log("eror response :", error.response);
+      }
+      console.log("error :", error);
+    }
+  }
+  loadMyProducts();
+},[])
 return(
     <>
     <div className="main-grid-container mb-8 pb-10 pt-2 bg-[#cc7f3c] w-full flex flex-col items-center  justify-center">

@@ -97,16 +97,10 @@ const Login = () => {
             const user_type_fromLogin = response.data.data.user_type;
             localStorage.setItem("authToken", token);
             localStorage.setItem("user_id",user_id);
+            localStorage.setItem("user_type",user_type_fromLogin);
             console.log("localStorage :", localStorage);
-            const seller_user_type = "67472a23659bfab478d1ef7d"
             setTimeout(() => {
-                if (user_type_fromLogin === seller_user_type) {
-                
-                    navigate("/sellerhome");
-                }
-                else {
-                    navigate("/userhome");
-                }
+                navigate("/userhome")
             }, 2000); 
            
 

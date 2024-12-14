@@ -67,7 +67,7 @@ const Cart = () => {
           }
         })
 
-        console.log("response from 2nd useeefect :", response);
+        console.log("response from 2nd useefect :", response);
         let data = response.data.data;
         console.log("response data :", data);
         let cartWithQuantities = data.cart.map((item) => ({

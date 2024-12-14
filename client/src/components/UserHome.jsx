@@ -9,7 +9,8 @@ import { DataContext } from "./DataProvider";
 
 
 function UserHome() {
-
+    
+    const [visibleSellerControls, setVisibleSellerControls] = useState(false);
     const {showShippingForm, setShowShippingForm} = useContext(DataContext);
     console.log("showshippingform :",showShippingForm); 
 
@@ -18,6 +19,8 @@ function UserHome() {
         setShowShippingForm(!showShippingForm);
         
     }
+    
+   
 
     return (
         <>
