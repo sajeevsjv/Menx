@@ -2,34 +2,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserNavbar from "./UserNavbar";
 import Carousel from "./Carousel";
-import ShippingForm from "./ShippingForm";
-import { useContext } from "react";
-import { DataContext } from "./DataProvider";
+
 
 
 
 function UserHome() {
     
     const [visibleSellerControls, setVisibleSellerControls] = useState(false);
-    const {showShippingForm, setShowShippingForm} = useContext(DataContext);
-    console.log("showshippingform :",showShippingForm); 
-
     
-    function toggleshippingform (){
-        setShowShippingForm(!showShippingForm);
-        
-    }
-    
-   
-
     return (
         <>
-           
-            {showShippingForm && (
-            <div className="shipping-form-container h-[100vh] fixed top-0 z-50 backdrop-blur-md  w-full">
-                <ShippingForm />
-            </div>
-            )}
              <UserNavbar />
             <div className="small-banner text-md ">
                 <p>

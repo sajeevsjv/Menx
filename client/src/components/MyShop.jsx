@@ -106,7 +106,7 @@ function MyShop() {
                 <div className="newin-text w-11/12 my-4">
                     <span className="text-xl text-gray-400 uppercase tracking-[3px]">All products</span>
                 </div>
-                <div className="newin-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 w-11/12">
+                <div className="newin-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-y-10 gap-x-5 w-11/12">
                     {products?.length > 0 ? (
                         products.map((product) => (
                             <div className="product-card" key={product._id}>
@@ -119,8 +119,8 @@ function MyShop() {
                                 </div>
                                 <div className="product-details">
                                     <h3 className="product-name">{product.name.slice(0, 30) || "Product Name"}..</h3>
-                                    <p className="product-price font-[arial] font-bold">₹{product.price || "0.00"}</p>
-                                    <p className="text-[green] text-lg">stock :{product.stock}</p>
+                                    <p className="product-price font-[arial]">₹{product.price || "0.00"}</p>
+                                    <p className="text-[green] text-l font-[arial]">stock:{product.stock}</p>
                                 </div>
                                 <div className="product-actions">
                                     <button className="add-to-cart flex justify-center gap-1">

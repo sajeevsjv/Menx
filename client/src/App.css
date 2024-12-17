@@ -777,10 +777,8 @@ ion-icon{
     padding: 5px;
     color: #404040;
     cursor: pointer;
-  }
+}
   
-
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .product-form-container .form-container {

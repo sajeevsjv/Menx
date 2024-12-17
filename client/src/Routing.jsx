@@ -17,6 +17,7 @@ import TestCarousel from "./components/TestCarousel";
 import Offcanvas from "./components/Offcanvas";
 import ShippingForm from "./components/ShippingForm";
 import MyShop from "./components/MyShop";
+import Orders from "./components/Orders";
 function Routing(){
     return(
         <>
@@ -40,6 +41,7 @@ function Routing(){
             <Route path={"/offcanvas"} element={<Offcanvas />} />
             <Route path={"/shippingform"} element={<ShippingForm />} />
             <Route path={"/myshop"} element={<MyShop />} />
+            <Route path={"/orders"} element={<Orders />} />
             </Routes>
         </Router>
         </>

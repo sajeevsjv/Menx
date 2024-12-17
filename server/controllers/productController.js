@@ -1,4 +1,5 @@
 const products = require("../db/models/products")
+const orders = require("../db/models/orders")
 const mongoose = require("mongoose");
 const { error_function, success_function } = require("../utils/response-handler");
 const users = require("../db/models/users");
@@ -127,10 +128,19 @@ exports.getSingleProduct = async (req,res) =>{
       res.status(response.statusCode).send(response);
       return;
     }
+    else{
+      console.log("error :",error);
+    let response = error_function({
+      statusCode : 400,
+      message : 'Failed to get the product!'
+    })
+    res.status(response.statusCode).send(response);
+    return;
+    }
   }
   catch(error){
     console.log("error :",error);
-    let response = success_function({
+    let response = error_function({
       statusCode : 400,
       message : error.message ? error.message : error
     })
@@ -288,10 +298,30 @@ exports.deleteFromCart = async (req, res) => {
 };
 
 exports.placeOrder = async (req, res) => {
-  const cartItems = req.body; // cartItems is an array of { product_id, quantity }
+  const { cartItems, totalAmount } = req.body;
+  console.log("total ampunttttt : ",totalAmount);
   const userId = new mongoose.Types.ObjectId(req.params.id);
 
   try {
+      
+    const orderItems = cartItems.map((item) => ({
+      productId: item._id,
+      sellerId: item.seller,
+      quantity: item.quantity,
+      price: item.price,
+      subtotal: item.quantity * item.price,
+      }));
+
+      const order = {
+        userId,
+        totalAmount,
+        items: orderItems
+      }
+    
+      const savedOrder = await orders.create(order);
+      console.log('Order Created:', savedOrder);
+  if(savedOrder){
+
     // Prepare bulk operations
     const bulkOperations = cartItems.map((item) => ({
       updateOne: {
@@ -338,7 +368,7 @@ exports.placeOrder = async (req, res) => {
       // Success response
       let response = success_function({
         statusCode: 200,
-        message: "Your order was placed successfully.",
+        message: "Order placed successfully.",
       });
       return res.status(response.statusCode).send(response);
     } else {
@@ -348,14 +378,55 @@ exports.placeOrder = async (req, res) => {
       });
       return res.status(response.statusCode).send(response);
     }
+  }
+  else{
+    let response = error_function({
+      statusCode: 400,
+      message: "Failed to place order!",
+    });
+    return res.status(response.statusCode).send(response);
+  }
+
   } catch (error) {
     console.error("Error in placing the order:", error.message);
     let response = error_function({
       statusCode: 400,
-      message: "An error occurred while placing the order.",
+      message: error.message ? error.message : error,
     });
     return res.status(response.statusCode).send(response);
   }
 };
 
+exports.viewOrders = async (req,res) =>{
+  try{
+    let _id = req.params.id
+    let myorders = await orders.findOne({userId : _id})
+    if(myorders){
+      let response = success_function({
+        statusCode : 200,
+        data : myorders
+      })
+      res.status(response.statusCode).send(response);
+      return;
+    }
+    else{
+      console.log("error :",error);
+    let response = error_function({
+      statusCode : 400,
+      message : 'Failed to get orders'
+    })
+    res.status(response.statusCode).send(response);
+    return;
+    }
+  }
+  catch(error){
+    console.log("error :",error);
+    let response = error_function({
+      statusCode : 400,
+      message : error.message ? error.message : error
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  }
 

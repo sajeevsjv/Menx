@@ -9,6 +9,7 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+import Login from "./Login";
 
 
 const UserNavbar = () => {
@@ -74,7 +75,7 @@ const UserNavbar = () => {
   };
 
   return (
-    <>
+    <> 
       <nav className=" text-black bg-white border-b-[1px] p-2 fixed top-0 w-full z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
           <div className="flex items-center justify-between h-12">
@@ -104,21 +105,20 @@ const UserNavbar = () => {
               className={`${menuOpen ? "block" : "hidden"
                 } absolute top-16 left-0 w-full bg-white z-10 border-b-2 lg:hidden `}
             >
-              {["Home", "Products", "Shop", "Contact"].map((tab) => (
-                <a
-                  key={tab}
-                  href="#"
-                  className={`block px-4 py-2 overflow-hidden transition-all duration-300 ease-in-out text-xs${activeTab === tab ? "text-orange-500 text-xs " : ""
-                    }`}
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab}
-                </a>
-              ))}
+              <Link to="/userhome">Home</Link>
+              <Link to="/shop" >Shop</Link>
+              <Link to="shop" >Clothing</Link>
+              <Link to="shop" >Shoes</Link>
+              <Link to="shop" >Jewellery</Link>
+              <Link to="">Contact</Link>
+              {visibleSellerControls &&
+               <Link to="/myshop">MyShop</Link> 
+               }
+              ))
             </div>
 
             {/* Nav Links for Desktop */}
-            <div className="hidden lg:flex gap-2 w-[45%] text-sm ">
+            <div className="hidden lg:flex gap-2 w-[45%] text-sm tracking-wider">
 
               <Link to="/userhome">Home</Link>
               <Link to="/shop" >Shop</Link>
@@ -196,7 +196,7 @@ const UserNavbar = () => {
                             onClick={handleSignOut}
 
                           >
-                            <Link to={"login"}>Sign Out</Link>
+                            <Link to={"/userhome"} onClick={handleSignOut}>Sign Out</Link>
                           </span>
                         </MenuItem>
                       </>
@@ -231,6 +231,7 @@ const UserNavbar = () => {
           </div>
         </div>
       </nav>
+      
       {/* Offcanvas Menu */}
       <div
         className={`fixed top-0 right-0 h-full w-1/4 bg-white text-black transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'
@@ -264,7 +265,7 @@ const UserNavbar = () => {
             : 
             null}
 
-              <button onClick={toggleshippingform} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
+              <button onClick={()=>navigate("/shippingform")} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
                 <ion-icon name="add-outline"></ion-icon> Add new address
               </button>
           
@@ -284,6 +285,9 @@ const handleSignOut = () => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     toast.success('succesfully loggedout');
+    setTimeout(() => {
+      navigate("userhome")
+    }, 2000); 
   } else {
     toast.error("Failed to logout");
   }

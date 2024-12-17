@@ -77,7 +77,6 @@ const ShippingForm = () => {
       >
         <div className="flex justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-800">Shipping Details</h2>
-          <span className='cursor-pointer' onClick={toggleshippingform}><ion-icon name="close-outline"></ion-icon></span>
         </div>
 
         <div>

@@ -22,7 +22,7 @@ const Cart = () => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-
+  
 
   
   // Function to remove an item
@@ -91,6 +91,7 @@ const Cart = () => {
   async function placeOrder(cartItems){
     const user_id = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("authToken");
+    console.log("total amountttttt :",totalPrice);
     const processingToast = toast.loading("Processing your order...");
 
     try {
@@ -100,7 +101,7 @@ const Cart = () => {
         headers: {
           "Authorization": `Bearer ${authToken}`
         },
-        data : cartItems
+        data : { cartItems, totalAmount : totalPrice }
       })
 
       console.log("response:", response);

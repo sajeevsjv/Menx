@@ -7,10 +7,19 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserNavbar from './UserNavbar';
+import { useContext } from 'react';
+import { DataContext } from './DataProvider';
 
 
 
 const Login = () => {
+    
+     const {showLoginForm, setShowLoginForm} = useContext(DataContext);
+    
+    function toggleloginform(){
+        setShowLoginForm(!showLoginForm);
+        console.log("showloginform :",showLoginForm);
+    }
 
     const navigate = useNavigate();
 
@@ -18,64 +27,19 @@ const Login = () => {
         email: "",
         password: ""
     });
+    
 
-    // const [error, setError] = useState({
-    //     name_error: "",
-    //     email_error: "",
-
-    // });
-
+   
     const handleChange = (e) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
         // validate(name, value);
     }
 
-    // function validate(field, value) {
-    //     let message = "";
-    //     const emailReg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //     const passrReg = /^.{6,}$/;
-
-
-    //     if (field === 'name') {
-
-    //         if (!value) {
-    //             message = "name is required!"
-    //         }
-    //         else if (!nameReg.test(value)) {
-    //             message = "invalid name format!"
-
-    //         }
-    //         setError((prev) => ({ ...prev, name_error: message }));
-    //         return;
-    //     }
-    //     else {
-    //         if (!value) {
-    //             message = 'email is required!'
-    //         }
-    //         else if (!emailReg.test(value)) {
-    //             message = 'invalid email format!'
-
-    //         }
-    //         setError((prev) => ({ ...prev, email_error: message }));
-    //         return;
-    //     }
-
-    // }
-
-
     const handleLogin = async (e) => {
         e.preventDefault();
 
         console.log("data from login :", data);
-
-        // if ( error.email_error ){
-        //     return;
-        // }
-        // else if (!data.email || !data.password) {
-        //     alert("please enter email and password submitting")
-        //     return;
-        // }
 
         try {
             let response = await axios({
