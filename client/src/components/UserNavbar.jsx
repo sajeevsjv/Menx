@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
 import Login from "./Login";
-
+import { useCallback } from "react";
 
 const UserNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,19 +23,19 @@ const UserNavbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const { userData, setUserData, showShippingForm, setShowShippingForm } = useContext(DataContext);
+  const { userData, setUserData, searchContent, setSearchContent } = useContext(DataContext);
 
-  function toggleshippingform(){
+  function toggleshippingform() {
     setShowShippingForm(!showShippingForm);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     const seller_user_type = "67472a23659bfab478d1ef7d"
     const user_type = localStorage.getItem("user_type");
-    if(user_type === seller_user_type){
-        setVisibleSellerControls(true);
+    if (user_type === seller_user_type) {
+      setVisibleSellerControls(true);
     }
-},[])
+  }, [])
 
   useEffect(() => {
     const user_id = localStorage.getItem("user_id");
@@ -74,8 +74,14 @@ const UserNavbar = () => {
     setMenuOpen(false); // Close menu on mobile when a link is clicked
   };
 
+  const handleChange = useCallback((e) => {
+    e.preventDefault();
+    let searchdata = e.target.value; // Capture the input value
+    setSearchContent(searchdata); // Update state
+  }, []); 
+
   return (
-    <> 
+    <>
       <nav className=" text-black bg-white border-b-[1px] p-2 fixed top-0 w-full z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
           <div className="flex items-center justify-between h-12">
@@ -102,20 +108,18 @@ const UserNavbar = () => {
 
             {/* Nav Links Dropdown for Mobile */}
             <div
-              className={`${menuOpen ? "block" : "hidden"
-                } absolute top-16 left-0 w-full bg-white z-10 border-b-2 lg:hidden `}
+              className={`absolute top-16 left-0 w-full flex flex-col text-sm space-y-3 bg-white p-4 z-10 border-b-2 lg:hidden
+              ${menuOpen ? "animate-slide-down" : "animate-slide-up hidden"}
+             `}
             >
               <Link to="/userhome">Home</Link>
-              <Link to="/shop" >Shop</Link>
-              <Link to="shop" >Clothing</Link>
-              <Link to="shop" >Shoes</Link>
-              <Link to="shop" >Jewellery</Link>
+              <Link to="/shop">Shop</Link>
+              <Link to="/shop">Clothing</Link>
+              <Link to="/shop">Shoes</Link>
               <Link to="">Contact</Link>
-              {visibleSellerControls &&
-               <Link to="/myshop">MyShop</Link> 
-               }
-              ))
+              {visibleSellerControls && <Link to="/myshop">MyShop</Link>}
             </div>
+
 
             {/* Nav Links for Desktop */}
             <div className="hidden lg:flex gap-2 w-[45%] text-sm tracking-wider">
@@ -127,8 +131,8 @@ const UserNavbar = () => {
               <Link to="shop" >Jewellery</Link>
               <Link to="">Contact</Link>
               {visibleSellerControls &&
-               <Link to="/myshop">MyShop</Link> 
-               }
+                <Link to="/myshop">MyShop</Link>
+              }
 
 
 
@@ -147,6 +151,7 @@ const UserNavbar = () => {
                   type="text"
                   placeholder="Search"
                   className=" pl-3 pr-10 py-1 border-2 text-black focus:outline-none"
+                  onChange={handleChange}
                 />
                 <button
                   type="submit"
@@ -231,10 +236,10 @@ const UserNavbar = () => {
           </div>
         </div>
       </nav>
-      
+
       {/* Offcanvas Menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-1/4 bg-white text-black transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full w-full md:w-[1/2] lg:w-1/4 bg-white text-black transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'
           } shadow-lg z-50`}
       >
         <div className="p-3 bg-[#dbb485] rounded-xs">
@@ -262,17 +267,17 @@ const UserNavbar = () => {
             ? userData.address.map((adr, index) => (
               <p key={index} className="text-sm ml-5">{adr.address}</p>
             ))
-            : 
+            :
             null}
 
-              <button onClick={()=>navigate("/shippingform")} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
-                <ion-icon name="add-outline"></ion-icon> Add new address
-              </button>
-          
+          <button onClick={() => navigate("/shippingform")} className="px-4 py-2 ml-5 text-white text-sm tracking-wide border bg-orange-400 rounded-full flex justify-center items-center gap-1">
+            <ion-icon name="add-outline"></ion-icon> Add new address
+          </button>
+
 
           <li><div className="divider h-[1px] w-full bg-slate-200"></div></li>
           {!visibleSellerControls &&
-          <li className="flex items-center gap-2 text-md"><ion-icon name="arrow-up-circle-outline"></ion-icon> <Link to={"/cart"}>Upgrade to Seller Account</Link></li>
+            <li className="flex items-center gap-2 text-md"><ion-icon name="arrow-up-circle-outline"></ion-icon> <Link to={"/cart"}>Upgrade to Seller Account</Link></li>
           }
         </ul>
       </div>
@@ -287,7 +292,7 @@ const handleSignOut = () => {
     toast.success('succesfully loggedout');
     setTimeout(() => {
       navigate("userhome")
-    }, 2000); 
+    }, 2000);
   } else {
     toast.error("Failed to logout");
   }

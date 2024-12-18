@@ -277,7 +277,7 @@ const Shop = () => {
 
         <div className="main-grid-container w-full relative md:w-3/4  flex flex-col gap-4 items-center  justify-center">
           <div className="newin-text w-11/12 my-4 text-center">
-            <span className="text-lg capitalize font-semibold lg:text-xl  text-gray-950 tracking-[3px] ">
+            <span className="text-3xl font-semibold text-gray-800 lg:text-xl">
               {categories}
             </span>
           </div>

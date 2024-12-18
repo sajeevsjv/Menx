@@ -4,13 +4,12 @@ export const DataContext = createContext();
 
 const  DataProvider = ({children}) => {
     const [userData, setUserData] = useState(null);
-    const [showShippingForm, setShowShippingForm] = useState(false);
     const [cartItems, setCartedItems] = useState([]);
-    const [showLoginForm, setShowLoginForm] = useState(false);
+    const [searchContent, setSearchContent] = useState("");
 
     return(
         <>
-        <DataContext.Provider value={{userData, setUserData, showShippingForm, setShowShippingForm, showLoginForm, setShowLoginForm}}>
+        <DataContext.Provider value={{userData, setUserData, searchContent, setSearchContent}}>
         {children}
         </DataContext.Provider>
         </>

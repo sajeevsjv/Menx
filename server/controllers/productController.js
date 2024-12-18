@@ -149,6 +149,27 @@ exports.getSingleProduct = async (req,res) =>{
   }
   }
 
+exports.getNewInProducts = async (req, res) => {
+    try {
+        const recentProducts = await products.find({})
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .limit(20); // Limit to 20 recent products
+            let response = success_function({
+              statusCode : 200,
+              data : recentProducts
+            })
+            res.status(response.statusCode).send(response);
+            return;
+    } catch (error) { 
+      let response = error_function({
+        statusCode : 400,
+        message : error.message ? error.message : error
+      })
+      res.status(response.statusCode).send(response);
+      return;
+    }
+};
+
 
 exports.sellerProducts = async (req,res) =>{
   let userId = new mongoose.Types.ObjectId(req.params.id);
@@ -400,7 +421,7 @@ exports.placeOrder = async (req, res) => {
 exports.viewOrders = async (req,res) =>{
   try{
     let _id = req.params.id
-    let myorders = await orders.findOne({userId : _id})
+    let myorders = await orders.findOne({userId : _id}).populate("items.productId");
     if(myorders){
       let response = success_function({
         statusCode : 200,

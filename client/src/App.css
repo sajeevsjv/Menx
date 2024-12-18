@@ -778,6 +778,37 @@ ion-icon{
     color: #404040;
     cursor: pointer;
 }
+
+
+@keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slide-up {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+  
+  .animate-slide-down {
+    animation: slide-down 0.3s ease forwards;
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.3s ease forwards;
+  }
   
 /* Responsive Design */
 @media (max-width: 768px) {
