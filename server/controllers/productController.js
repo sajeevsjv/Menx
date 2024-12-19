@@ -275,6 +275,66 @@ exports.addToCart = async (req,res) =>{
   }
 } 
 
+exports.addToWishlist = async (req,res) =>{
+  console.log("body :",req.body);
+  let product_id  = new mongoose.Types.ObjectId(req.body.product_id);
+  let user_id = new mongoose.Types.ObjectId(req.body.user_id);
+
+  try{
+
+    const user = await users.findOne({
+      _id: user_id,
+      cart: {
+          $elemMatch: {
+              product: product_id
+          }
+      }
+  });
+  
+
+  if(user){
+    let response = error_function({
+      statusCode : 400,
+      message : "Product already in whishlist"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+
+  let updateUser = await users.updateOne(
+    { _id: user_id }, // Filter: Specifies which document to update
+    {
+        $push: { wishlist: { product: product_id } } 
+    }
+);
+
+  if(updateUser.modifiedCount > 0){
+    let response = success_function({
+      statusCode : 200,
+      message : "Added to wishlist"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  else{
+    let response = error_function({
+      statusCode : 400,
+      message : "Failed to add"
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+  }
+  catch(error){
+    let response = error_function({
+      statusCode : 400,
+      message : error.message ?  error.message : error
+    })
+    res.status(response.statusCode).send(response);
+    return;
+  }
+} 
+
 exports.deleteFromCart = async (req, res) => {
   const product_id = new mongoose.Types.ObjectId(req.params.id); // Ensure product_id is properly converted to ObjectId
 
@@ -305,6 +365,49 @@ exports.deleteFromCart = async (req, res) => {
       let  response = error_function({
         statusCode: 400,
         message: "Product not found in cart"
+      });
+      return res.status(response.statusCode).send(response);
+    }
+  } catch (error) {
+    // Handle any error that occurred during the update operation
+    let  response = error_function({
+      statusCode: 500,
+      message: "Failed to remove the product due to server error"
+    });
+    return res.status(response.statusCode).send(response);
+  }
+};
+
+exports.removeFromWishlist = async (req, res) => {
+  const product_id = new mongoose.Types.ObjectId(req.params.id); // Ensure product_id is properly converted to ObjectId
+
+  if (!product_id) {
+    // If the product_id is invalid
+    const response = error_function({
+      statusCode: 400,
+      message: "Invalid product ID"
+    });
+    return res.status(response.statusCode).send(response);
+  }
+
+  try {
+    const updateWishlist = await users.updateOne(
+      { 'wishlist.product': product_id }, // Find user with product in the cart
+      { $pull: { wishlist: { product: product_id } } } // Remove product from cart
+    );
+
+    if (updateWishlist.modifiedCount > 0) {
+      // Product removed successfully
+      const response = success_function({
+        statusCode: 200,
+        message: "Product removed from wishlist"
+      });
+      return res.status(response.statusCode).send(response);
+    } else {
+      // No product found to remove
+      let  response = error_function({
+        statusCode: 400,
+        message: "Product not found in wishlist"
       });
       return res.status(response.statusCode).send(response);
     }

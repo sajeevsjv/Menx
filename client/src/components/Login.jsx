@@ -104,7 +104,7 @@ const Login = () => {
                         </svg>
                         <input type="password" className="inputField" id="password" name='password' placeholder="Password" onChange={handleChange} />
                     </div>
-                    <button id="button">Submit</button>
+                    <button id="" className='font-[Syne] font-bold w-full mb-2  z-50 mt-3 text-white tracking-wide h-9 hover:-translate-y-[1px] transition-all duration-300 ease-in-out hover:bg-black bg-orange-400 rounded-sm p-1'>Submit</button>
                     <span>Don't have an account? <Link to={"/signup"}>SignUp</Link></span>
                 </form>
             </div>

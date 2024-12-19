@@ -46,6 +46,8 @@ const Shop = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [cartItems, setCartItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistStatus, setWishlistStatus] = useState(false);
 
   const navigate = useNavigate();
 
@@ -86,6 +88,9 @@ const Shop = () => {
         console.log("response data :", data);
         let cart = data.cart.map(item => item.product._id);
         setCartItems(cart);
+        let wishlist = data.wishlist.map(item => item.product);
+        console.log("wishlist :", wishlist);
+        setWishlistItems(wishlist);
 
       }
       catch (error) {
@@ -98,6 +103,8 @@ const Shop = () => {
 
     loadCart();
   }, [])
+
+
 
   console.log("allproducts", allProducts);
 
@@ -182,7 +189,7 @@ const Shop = () => {
       toast.error("Please login to continue.");
       return;
     }
-  
+
 
     try {
       let response = await axios({
@@ -200,7 +207,10 @@ const Shop = () => {
 
       console.log("response :", response);
       let message = response.data.message;
-      toast.success(message);
+      // toast.success(message,{
+      //   autoClose: 2000,
+      //   position: "top-center"
+      // });
       setCartItems((prevCartItems) => [...prevCartItems, id]); // Add the product id to the cart state
 
 
@@ -215,6 +225,77 @@ const Shop = () => {
 
   }
 
+  const addToWishlist = async (e, id) => {
+    e.stopPropagation();
+    
+    const user_id = localStorage.getItem("user_id");
+    const product_id = id;
+    const authToken = localStorage.getItem("authToken");
+    
+    if (!user_id || !authToken) {
+      toast.error("Please login to continue.");
+      return;
+    }
+    
+    // Calculate the new wishlist status
+    const currentStatus = !wishlistStatus;
+    setWishlistStatus(currentStatus); // Update the state with the new status
+    
+    if (currentStatus) {
+      // Add to wishlist
+      try {
+        let response = await axios({
+          method: "POST",
+          url: "http://localhost:3003/addtowishlist",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`,
+          },
+          data: {
+            user_id,
+            product_id,
+          },
+        });
+  
+        console.log("response:", response);
+        let message = response.data.message;
+        toast.success(message);
+        setWishlistItems((prevCartItems) => [...prevCartItems, id]); // Add the product ID to the wishlist
+      } catch (error) {
+        if (error.response) {
+          let message = error.response.data.message;
+          toast.error(message);
+        }
+        console.error("Error:", error);
+      }
+    } else {
+      // Remove from wishlist
+      try {
+        let response = await axios({
+          method: "DELETE",
+          url: `http://localhost:3003/removefromwishlist/${id}`,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`,
+          },
+        });
+  
+        console.log("response:", response);
+        let message = response.data.message;
+        toast.success(message);
+        setWishlistItems((prevCartItems) =>
+          prevCartItems.filter((item) => item !== id)
+        ); // Remove the product ID from the wishlist
+      } catch (error) {
+        if (error.response) {
+          let message = error.response.data.message;
+          toast.error(message);
+        }
+        console.error("Error:", error);
+      }
+    }
+  };
+  
   console.log("cartItems :", cartItems);
 
   return (
@@ -293,7 +374,7 @@ const Shop = () => {
                   ) : (
                     <p>No Image Available</p>
                   )}
-                  <button className="wishlist-btn">
+                  <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.includes(product._id) ? "wishlist-btn" : "wishlist-btn1"} `}>
                     ❤
                   </button>
                 </div>

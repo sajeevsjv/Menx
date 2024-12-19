@@ -139,7 +139,7 @@ const UserNavbar = () => {
             </div>
 
             {/* Center Text Logo */}
-            <div className="text-xl uppercase tracking-[4px] font-bold">
+            <div className="text-2xl uppercase tracking-[3px] font-[Lato] font-medium">
               <a href="#">Menx.</a>
             </div>
 
@@ -155,7 +155,7 @@ const UserNavbar = () => {
                 />
                 <button
                   type="submit"
-                  className="absolute  h-9 top-0 right-0 px-3 py-1 bg-orange-400  hover:bg-black hover:text-white"
+                  className="absolute  h-9 top-0 right-0 px-3 py-1 bg-[rgb(255,177,109)] hover:bg-black hover:text-white"
                 >
                   Go
                 </button>

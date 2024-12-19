@@ -85,17 +85,17 @@ function UserHome() {
                             <div key={product.id} className="product-card">
                                 <div className="product-image relative">
                                     <img
-                                        src={`http://localhost:3003/${product.product_image}`}
+                                        src={`http://localhost:3003/${product.product_images[0]}`}
                                         alt={product.name || "Product Image"}
                                         className="w-full h-60 object-cover rounded-md"
                                     />
-                                    <button className="wishlist-btn absolute top-2 right-2 bg-white p-1 rounded-full shadow">
+                                    <button className="wishlist-btn  absolute top-2 right-2 bg-white p-1 rounded-full shadow">
                                         ❤
                                     </button>
                                 </div>
                                 <div className="product-details p-2">
                                     <h3 className="product-name text-lg font-semibold truncate">{product.name}</h3>
-                                    <p className="product-price text-gray-600 mt-1">${product.price}</p>
+                                    <p className="product-price text-gray-600 mt-1"> ${product.price}</p>
                                 </div>
                                 <div className="product-actions mt-2">
                                     <button className="add-to-cart flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition">

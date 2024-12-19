@@ -18,6 +18,7 @@ import Offcanvas from "./components/Offcanvas";
 import ShippingForm from "./components/ShippingForm";
 import MyShop from "./components/MyShop";
 import Orders from "./components/Orders";
+import Dashboard from "./components/Dashboard";
 function Routing(){
     return(
         <>
@@ -42,6 +43,7 @@ function Routing(){
             <Route path={"/shippingform"} element={<ShippingForm />} />
             <Route path={"/myshop"} element={<MyShop />} />
             <Route path={"/orders"} element={<Orders />} />
+            <Route path={"/dashboard"} element={<Dashboard/>} />
             </Routes>
         </Router>
         </>
