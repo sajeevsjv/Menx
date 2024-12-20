@@ -11,7 +11,7 @@ function setaccessControl(access_types){
 
 router.get("/categories",setaccessControl("1,2,3"),productController.loadCategories)
 router.post("/addproduct",setaccessControl("3"),productController.addProduct);
-router.get("/getallproducts",productController.getAllProducts);
+router.get("/getallproducts/:id",productController.getAllProducts);
 router.get("/getsingleproduct/:id",productController.getSingleProduct);
 router.post("/addtocart",setaccessControl("2,3"),productController.addToCart);
 router.post("/addtowishlist",setaccessControl("2,3"),productController.addToWishlist);
@@ -21,5 +21,5 @@ router.post("/placeorder/:id",setaccessControl("2,3"),productController.placeOrd
 router.get("/sellerproducts/:id",setaccessControl("3"),productController.sellerProducts);
 router.get("/lowstockproducts/:id",setaccessControl("3"),productController.lowStockProducts);
 router.get("/myorders/:id",setaccessControl("2,3"),productController.viewOrders);
-router.get("/newproducts",productController.getNewInProducts);
+router.get("/newproducts/:id",productController.getNewInProducts);
 module.exports = router;

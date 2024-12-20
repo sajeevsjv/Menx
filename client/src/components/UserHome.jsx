@@ -4,6 +4,7 @@ import UserNavbar from "./UserNavbar";
 import Carousel from "./Carousel";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 
@@ -15,6 +16,9 @@ function UserHome() {
     const [newProducts, setNewProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [allProducts, setAllProducts] = useState("");
+    const [cartItems, setCartItems] = useState([]);
+    const [wishlistItems, setWishlistItems] = useState([]);
+    const [wishlistStatus, setWishlistStatus] = useState(false);
     const { searchContent } = useContext(DataContext);
     console.log("searchContent :", searchContent);
 
@@ -28,7 +32,7 @@ function UserHome() {
                     headers: { Authorization: `Bearer ${authToken}` },
                 });
                 setNewProducts(response.data.data);
-                console.log("new in response :",response);
+                console.log("new in response :", response);
             } catch (error) {
                 console.error("Error fetching products:", error.response || error);
             }
@@ -52,7 +56,158 @@ function UserHome() {
         loadProducts();
 
     }, []);
-  
+
+
+    useEffect(() => {
+        const loadCart = async () => {
+            console.log("loadcart executed")
+            const user_id = localStorage.getItem("user_id");
+            const authToken = localStorage.getItem("authToken");
+            try {
+                let response = await axios({
+                    method: "GET",
+                    url: `http://localhost:3003/getsingleuser/${user_id}`,
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`
+                    }
+                })
+
+                console.log("response from 2nd useeefect :", response);
+                let data = response.data.data;
+                console.log("response data :", data);
+                let cart = data.cart.map(item => item.product._id);
+                setCartItems(cart);
+                let wishlist = data.wishlist.map(item => item.product);
+                console.log("wishlist :", wishlist);
+                setWishlistItems(wishlist);
+
+            }
+            catch (error) {
+                if (error.response) {
+                    console.log("eror response :", error.response);
+                }
+                console.log("error :", error);
+            }
+        };
+
+        loadCart();
+    }, [])
+
+    const addToCart = async (id) => {
+        const user_id = localStorage.getItem("user_id");
+        const product_id = id;
+        const authToken = localStorage.getItem("authToken");
+        if (!user_id || !authToken) {
+            toast.error("Please login to continue.");
+            return;
+        }
+
+
+        try {
+            let response = await axios({
+                method: "POST",
+                url: "http://localhost:3003/addtocart",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
+                },
+                data: {
+                    user_id,
+                    product_id
+                }
+            });
+
+            console.log("response :", response);
+            let message = response.data.message;
+            // toast.success(message,{
+            //   autoClose: 2000,
+            //   position: "top-center"
+            // });
+            setCartItems((prevCartItems) => [...prevCartItems, id]); // Add the product id to the cart state
+
+
+        }
+        catch (error) {
+            if (error.response) {
+                let message = error.response.data.message;
+                toast.error(message);
+            }
+            console.log("error :", error);
+        }
+
+    }
+
+    const addToWishlist = async (e, id) => {
+        e.stopPropagation();
+
+        const user_id = localStorage.getItem("user_id");
+        const product_id = id;
+        const authToken = localStorage.getItem("authToken");
+
+        if (!user_id || !authToken) {
+            toast.error("Please login to continue.");
+            return;
+        }
+
+        // Calculate the new wishlist status
+        const currentStatus = !wishlistStatus;
+        setWishlistStatus(currentStatus); // Update the state with the new status
+
+        if (currentStatus) {
+            // Add to wishlist
+            try {
+                let response = await axios({
+                    method: "POST",
+                    url: "http://localhost:3003/addtowishlist",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${authToken}`,
+                    },
+                    data: {
+                        user_id,
+                        product_id,
+                    },
+                });
+
+                console.log("response:", response);
+                let message = response.data.message;
+                toast.success(message);
+                setWishlistItems((prevCartItems) => [...prevCartItems, id]); // Add the product ID to the wishlist
+            } catch (error) {
+                if (error.response) {
+                    let message = error.response.data.message;
+                    toast.error(message);
+                }
+                console.error("Error:", error);
+            }
+        } else {
+            // Remove from wishlist
+            try {
+                let response = await axios({
+                    method: "DELETE",
+                    url: `http://localhost:3003/removefromwishlist/${id}`,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${authToken}`,
+                    },
+                });
+
+                console.log("response:", response);
+                let message = response.data.message;
+                toast.success(message);
+                setWishlistItems((prevCartItems) =>
+                    prevCartItems.filter((item) => item !== id)
+                ); // Remove the product ID from the wishlist
+            } catch (error) {
+                if (error.response) {
+                    let message = error.response.data.message;
+                    toast.error(message);
+                }
+                console.error("Error:", error);
+            }
+        }
+    };
+
 
     // Filter products dynamically based on search input
     useEffect(() => {
@@ -149,7 +304,7 @@ function UserHome() {
                                         <div className="product-card" key={product._id}>
                                             <div className="product-image">
                                                 <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
-                                                <button className="wishlist-btn">
+                                                <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.includes(product._id) ? "wishlist-btn" : "wishlist-btn1"} `}>
                                                     ❤
                                                 </button>
                                             </div>
@@ -162,9 +317,19 @@ function UserHome() {
                                                 </p>
                                             </div>
                                             <div className="product-actions">
-                                                <button className="add-to-cart flex justify-center gap-1">
-                                                    <ion-icon name="cart"></ion-icon> Add to Cart
-                                                </button>
+                                                {cartItems.length > 0 && cartItems.includes(product._id) ? (
+                                                    <button className="bg-orange-400 rounded-sm text-white p-3 flex justify-center gap-1">
+                                                        <ion-icon name="checkbox"></ion-icon> Added to Cart
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        className="add-to-cart flex justify-center gap-1"
+                                                        onClick={() => addToCart(product._id)}
+                                                    >
+                                                        <ion-icon name="cart"></ion-icon> Add to Cart
+                                                    </button>
+                                                )}
+
                                             </div>
                                         </div>
                                     )) :

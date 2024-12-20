@@ -161,15 +161,15 @@ const UserNavbar = () => {
                 </button>
               </div>
 
-              <ion-icon name="heart-outline" />
-              <div className="flex justify-center items-center"><ion-icon name="bag-outline" onClick={() => navigate("/cart")} /><div className="mb-3 text-red"><img src="./images/circle.png" className="size-[7px]" alt="" /></div></div>
+              <ion-icon name="heart-outline" onClick={()=>navigate('/wishlist')}  />
+              <ion-icon name="bag-outline" onClick={() => navigate("/cart")} />
 
 
               {/* Profile Dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
                   <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                    <span className="absolute -inset-1.5" />
+                    <span className="absolute -inset-1.5"/>
                     <span className="sr-only">Open user menu</span>
                     <img
                       alt=""
@@ -190,7 +190,6 @@ const UserNavbar = () => {
                           <span
                             onClick={toggleOffcanvas}
                             className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-
                           >
                             My Profile
                           </span>
@@ -259,8 +258,8 @@ const UserNavbar = () => {
         </div>
         <ul className="p-5 space-y-6">
           <li className="flex items-center gap-2 text-md"> <ion-icon name="cart-outline"></ion-icon><Link to={"/cart"}>Cart</Link></li>
-          <li className="flex items-center gap-2 text-md"><ion-icon name="heart-outline"></ion-icon> <Link to={"/cart"}> Wishlist</Link></li>
-          <li className="flex items-center gap-2 text-md"><ion-icon name="pricetags-outline"></ion-icon> <Link to={"/cart"}>Orders</Link></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="heart-outline"></ion-icon> <Link to={"/wishlist"}> Wishlist</Link></li>
+          <li className="flex items-center gap-2 text-md"><ion-icon name="pricetags-outline"></ion-icon> <Link to={"/orders"}>Orders</Link></li>
           <li><div className="divider h-[1px] w-full bg-slate-200"></div></li>
           <li className="flex items-center gap-2 text-md"><ion-icon name="location-outline"></ion-icon> <Link to={"/shippingform"}>Saved Adresses</Link></li>
           {userData?.address?.length > 0

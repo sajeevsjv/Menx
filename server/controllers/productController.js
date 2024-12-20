@@ -96,7 +96,8 @@ exports.addProduct = async (req, res) => {
 
 exports.getAllProducts = async(req, res) => {
   try{
-    let allProducts = await products.find();
+    const user_id = new mongoose.Types.ObjectId(req.params.id);
+    let allProducts = await products.find({seller: { $ne: user_id }});
 
     if(products){
       let response = success_function({
@@ -149,26 +150,33 @@ exports.getSingleProduct = async (req,res) =>{
   }
   }
 
-exports.getNewInProducts = async (req, res) => {
+  exports.getNewInProducts = async (req, res) => {
     try {
-        const recentProducts = await products.find({})
-            .sort({ createdAt: -1 }) // Sort by newest first
-            .limit(20); // Limit to 20 recent products
-            let response = success_function({
-              statusCode : 200,
-              data : recentProducts
-            })
-            res.status(response.statusCode).send(response);
-            return;
-    } catch (error) { 
-      let response = error_function({
-        statusCode : 400,
-        message : error.message ? error.message : error
-      })
-      res.status(response.statusCode).send(response);
-      return;
+        const user_id = new mongoose.Types.ObjectId(req.params.id);
+        
+        // Fetch products excluding those with the matching seller field
+        const recentProducts = await products.find({
+            seller: { $ne: user_id } // Exclude products with seller matching user_id
+        })
+        .sort({ createdAt: -1 }) // Sort by newest first
+        .limit(20); // Limit to 20 recent products
+
+        let response = success_function({
+            statusCode: 200,
+            data: recentProducts
+        });
+        res.status(response.statusCode).send(response);
+        return;
+    } catch (error) {
+        let response = error_function({
+            statusCode: 400,
+            message: error.message ? error.message : error
+        });
+        res.status(response.statusCode).send(response);
+        return;
     }
 };
+
 
 
 exports.sellerProducts = async (req,res) =>{

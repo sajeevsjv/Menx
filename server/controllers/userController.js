@@ -238,7 +238,7 @@ exports.getAllUsers = async(req, res) => {
 exports.getSingleUser = async (req,res) =>{
   try{
     let _id = req.params.id;
-    let user = await users.findOne({_id}).populate("cart.product")
+    let user = await users.findOne({_id}).populate('cart.product').populate('wishlist.product');
     if(user){
       let response = success_function({
         statusCode : 200,

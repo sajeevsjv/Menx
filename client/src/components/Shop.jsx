@@ -55,8 +55,9 @@ const Shop = () => {
   useEffect(() => {
     const loadProducts = async () => {
       const authToken = localStorage.getItem("authToken");
+      const user_id = localStorage.getItem("user_id");
       try {
-        const response = await axios.get("http://localhost:3003/getallproducts", {
+        const response = await axios.get(`http://localhost:3003/getallproducts/${user_id}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
         setAllProducts(response.data.data);

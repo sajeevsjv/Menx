@@ -19,6 +19,7 @@ import ShippingForm from "./components/ShippingForm";
 import MyShop from "./components/MyShop";
 import Orders from "./components/Orders";
 import Dashboard from "./components/Dashboard";
+import Wishlist from "./components/Wishlist";
 function Routing(){
     return(
         <>
@@ -44,6 +45,7 @@ function Routing(){
             <Route path={"/myshop"} element={<MyShop />} />
             <Route path={"/orders"} element={<Orders />} />
             <Route path={"/dashboard"} element={<Dashboard/>} />
+            <Route path={"wishlist"} element={<Wishlist/>} />
             </Routes>
         </Router>
         </>

@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+import UserNavbar from "./UserNavbar";
 
 
 const Cart = () => {
@@ -145,7 +146,9 @@ const Cart = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <>
+    <UserNavbar />
+    <div className="max-w-4xl mt-20 mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">My Cart</h2>
       <div className="space-y-6">
         {cartItems.length > 0 ? (
@@ -193,6 +196,7 @@ const Cart = () => {
         </div>
       }
     </div>
+    </>
   );
 };
 
