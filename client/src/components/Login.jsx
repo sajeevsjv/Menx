@@ -86,7 +86,6 @@ const Login = () => {
 
     return (
         <> 
-           <UserNavbar />
             <div className="login-form-container m-auto w-[80%] md:w-[40%] flex justify-center">
                 <form action className="form_main border-[1px] min-h-40 w-[100%]" onSubmit={handleLogin}>
                     <p className="heading">Login</p>

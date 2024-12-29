@@ -228,75 +228,49 @@ const Shop = () => {
 
   const addToWishlist = async (e, id) => {
     e.stopPropagation();
-    
     const user_id = localStorage.getItem("user_id");
     const product_id = id;
     const authToken = localStorage.getItem("authToken");
-    
+
     if (!user_id || !authToken) {
       toast.error("Please login to continue.");
       return;
     }
-    
-    // Calculate the new wishlist status
-    const currentStatus = !wishlistStatus;
-    setWishlistStatus(currentStatus); // Update the state with the new status
-    
-    if (currentStatus) {
-      // Add to wishlist
-      try {
-        let response = await axios({
-          method: "POST",
-          url: "http://localhost:3003/addtowishlist",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`,
-          },
-          data: {
-            user_id,
-            product_id,
-          },
-        });
-  
-        console.log("response:", response);
-        let message = response.data.message;
-        toast.success(message);
-        setWishlistItems((prevCartItems) => [...prevCartItems, id]); // Add the product ID to the wishlist
-      } catch (error) {
-        if (error.response) {
-          let message = error.response.data.message;
-          toast.error(message);
-        }
-        console.error("Error:", error);
+
+    // Check if the product is already in the wishlist
+    const isProductInWishlist = wishlistItems.some((item) => item._id === product_id);
+
+    try {
+      if (!isProductInWishlist) {
+        // Add to wishlist
+        const response = await axios.post(
+          "http://localhost:3003/addtowishlist",
+          { user_id, product_id },
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        );
+        toast.success(response.data.message);
+
+        // Update wishlist state
+        setWishlistItems((prev) => [...prev, { _id: product_id }]);
+      } else {
+        // Remove from wishlist
+        const response = await axios.delete(
+          `http://localhost:3003/removefromwishlist/${product_id}`,
+          { headers: { Authorization: `Bearer ${authToken}` } }
+        );
+        toast.success(response.data.message);
+
+        // Update wishlist state
+        setWishlistItems((prev) => prev.filter((item) => item._id !== product_id));
       }
-    } else {
-      // Remove from wishlist
-      try {
-        let response = await axios({
-          method: "DELETE",
-          url: `http://localhost:3003/removefromwishlist/${id}`,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`,
-          },
-        });
-  
-        console.log("response:", response);
-        let message = response.data.message;
-        toast.success(message);
-        setWishlistItems((prevCartItems) =>
-          prevCartItems.filter((item) => item !== id)
-        ); // Remove the product ID from the wishlist
-      } catch (error) {
-        if (error.response) {
-          let message = error.response.data.message;
-          toast.error(message);
-        }
-        console.error("Error:", error);
-      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-  
+
+  console.log("wishlisteitemssssssssssssssssss :", wishlistItems);
+
   console.log("cartItems :", cartItems);
 
   return (
@@ -375,7 +349,8 @@ const Shop = () => {
                   ) : (
                     <p>No Image Available</p>
                   )}
-                  <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.includes(product._id) ? "wishlist-btn" : "wishlist-btn1"} `}>
+                  <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
+                    ? "wishlist-btn" : "wishlist-btn1"} `}>
                     ❤
                   </button>
                 </div>

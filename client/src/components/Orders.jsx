@@ -27,7 +27,7 @@ const Orders = () => {
         console.log("response from 2nd useefect :", response);
         let data = response.data.data;
         console.log("response data :", data);
-        setOrders([data]);
+        setOrders(data);
 
       }
       catch (error) {

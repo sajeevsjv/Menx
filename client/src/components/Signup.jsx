@@ -130,9 +130,7 @@ function Signup() {
           <div className="signup-bgimg absolute top-0 -z-10 w-full">
               <img src="images\Hero.webp" alt="" className="w-full" />
           </div>
-          <div className="flex min-h-full flex-1 flex-col justify-center px-6  lg:px-8">
-           
-    
+          <div className="flex min-h-full mt-8 flex-1 flex-col justify-center px-6  lg:px-8">
             <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
               <form action="#" method="POST" className="space-y-3 p-6  rounded-md backdrop-blur-lg border-2 " onSubmit={signup}>
                 <div>

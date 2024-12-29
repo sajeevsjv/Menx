@@ -19,10 +19,6 @@ const users = new mongoose.Schema({
     address : [{
         type : Object,
      }],
-    orders : {
-        type : [mongoose.Schema.ObjectId],
-        "ref" : "Products"
-    },
     cart: [
         {
             product: {

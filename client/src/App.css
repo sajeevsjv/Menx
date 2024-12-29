@@ -11,6 +11,10 @@
     font-family: "Syne",sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 
 .signup-container{
     display: flex;
@@ -344,7 +348,6 @@ input::placeholder{
     color: white;
     text-align: center;
     font-size: 14px;
-    margin-top: 67px;
 }
 .small-banner p{
     font-size: 12px;

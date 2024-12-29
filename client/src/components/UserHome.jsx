@@ -6,7 +6,8 @@ import { useContext } from "react";
 import { DataContext } from "./DataProvider";
 import { toast } from "react-toastify";
 import axios from "axios";
-
+import Footer from "./Footer";
+import Contactpage from "./Contact"
 
 
 
@@ -14,8 +15,6 @@ function UserHome() {
 
     const [visibleSellerControls, setVisibleSellerControls] = useState(false);
     const [newProducts, setNewProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
-    const [allProducts, setAllProducts] = useState("");
     const [cartItems, setCartItems] = useState([]);
     const [wishlistItems, setWishlistItems] = useState([]);
     const [wishlistStatus, setWishlistStatus] = useState(false);
@@ -27,8 +26,9 @@ function UserHome() {
     useEffect(() => {
         const loadNewProducts = async () => {
             const authToken = localStorage.getItem("authToken");
+            const user_id = localStorage.getItem("user_id");
             try {
-                const response = await axios.get("http://localhost:3003/newproducts", {
+                const response = await axios.get(`http://localhost:3003/newproducts/${user_id}`, {
                     headers: { Authorization: `Bearer ${authToken}` },
                 });
                 setNewProducts(response.data.data);
@@ -41,21 +41,6 @@ function UserHome() {
 
     }, []);
 
-    useEffect(() => {
-        const loadProducts = async () => {
-            const authToken = localStorage.getItem("authToken");
-            try {
-                const response = await axios.get("http://localhost:3003/getallproducts", {
-                    headers: { Authorization: `Bearer ${authToken}` },
-                });
-                setAllProducts(response.data.data);
-            } catch (error) {
-                console.error("Error fetching products:", error.response || error);
-            }
-        };
-        loadProducts();
-
-    }, []);
 
 
     useEffect(() => {
@@ -139,7 +124,6 @@ function UserHome() {
 
     const addToWishlist = async (e, id) => {
         e.stopPropagation();
-
         const user_id = localStorage.getItem("user_id");
         const product_id = id;
         const authToken = localStorage.getItem("authToken");
@@ -149,130 +133,49 @@ function UserHome() {
             return;
         }
 
-        // Calculate the new wishlist status
-        const currentStatus = !wishlistStatus;
-        setWishlistStatus(currentStatus); // Update the state with the new status
+        // Check if the product is already in the wishlist
+        const isProductInWishlist = wishlistItems.some((item) => item._id === product_id);
 
-        if (currentStatus) {
-            // Add to wishlist
-            try {
-                let response = await axios({
-                    method: "POST",
-                    url: "http://localhost:3003/addtowishlist",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${authToken}`,
-                    },
-                    data: {
-                        user_id,
-                        product_id,
-                    },
-                });
+        try {
+            if (!isProductInWishlist) {
+                // Add to wishlist
+                const response = await axios.post(
+                    "http://localhost:3003/addtowishlist",
+                    { user_id, product_id },
+                    { headers: { Authorization: `Bearer ${authToken}` } }
+                );
+                // Update wishlist state
+                setWishlistItems((prev) => [...prev, { _id: product_id }]);
+            } else {
+                // Remove from wishlist
+                const response = await axios.delete(
+                    `http://localhost:3003/removefromwishlist/${product_id}`,
+                    { headers: { Authorization: `Bearer ${authToken}` } }
+                );
 
-                console.log("response:", response);
-                let message = response.data.message;
-                toast.success(message);
-                setWishlistItems((prevCartItems) => [...prevCartItems, id]); // Add the product ID to the wishlist
-            } catch (error) {
-                if (error.response) {
-                    let message = error.response.data.message;
-                    toast.error(message);
-                }
-                console.error("Error:", error);
+                // Update wishlist state
+                setWishlistItems((prev) => prev.filter((item) => item._id !== product_id));
             }
-        } else {
-            // Remove from wishlist
-            try {
-                let response = await axios({
-                    method: "DELETE",
-                    url: `http://localhost:3003/removefromwishlist/${id}`,
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${authToken}`,
-                    },
-                });
-
-                console.log("response:", response);
-                let message = response.data.message;
-                toast.success(message);
-                setWishlistItems((prevCartItems) =>
-                    prevCartItems.filter((item) => item !== id)
-                ); // Remove the product ID from the wishlist
-            } catch (error) {
-                if (error.response) {
-                    let message = error.response.data.message;
-                    toast.error(message);
-                }
-                console.error("Error:", error);
-            }
+        } catch (error) {
+            console.error("Error updating wishlist:", error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         }
     };
 
-
-    // Filter products dynamically based on search input
-    useEffect(() => {
-        if (searchContent?.trim()) {
-            const lowerCaseSearch = searchContent.trim().toLowerCase(); // Normalize search input
-            const filtered = allProducts.filter((product) => {
-                const name = product.name?.toLowerCase() || ""; // Safeguard for product.name
-                const categories = Array.isArray(product.categories)
-                    ? product.categories.map((cat) => cat.toLowerCase()) // Ensure all categories are lowercase
-                    : []; // Fallback if categories is not an array
-                return (
-                    name.includes(lowerCaseSearch) ||
-                    categories.some((cat) => cat.includes(lowerCaseSearch)) // Check for a match in categories array
-                );
-            });
-            setFilteredProducts(filtered);
-        } else {
-            setFilteredProducts(allProducts); // Reset to all products when search is empty
-        }
-    }, [searchContent, allProducts]);
 
 
     return (
         <>
             <UserNavbar />
-            {searchContent && (
-                <div className="mt-32 grid grid-cols-3 items-center m-auto overflow-x-scroll auto-cols-[95%] sm:auto-cols-[80%] lg:auto-cols-[30%] gap-5 w-11/12">
-                    {filteredProducts?.length > 0 ? (
-                        filteredProducts.map((product) => (
-                            <div key={product.id} className="product-card">
-                                <div className="product-image relative">
-                                    <img
-                                        src={`http://localhost:3003/${product.product_images[0]}`}
-                                        alt={product.name || "Product Image"}
-                                        className="w-full h-60 object-cover rounded-md"
-                                    />
-                                    <button className="wishlist-btn  absolute top-2 right-2 bg-white p-1 rounded-full shadow">
-                                        ❤
-                                    </button>
-                                </div>
-                                <div className="product-details p-2">
-                                    <h3 className="product-name text-lg font-semibold truncate">{product.name}</h3>
-                                    <p className="product-price text-gray-600 mt-1"> ${product.price}</p>
-                                </div>
-                                <div className="product-actions mt-2">
-                                    <button className="add-to-cart flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition">
-                                        <ion-icon name="cart"></ion-icon> Add to Cart
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="col-span-3 text-center flex justify-center items-center gap-1 mb-8 text-gray-500"><ion-icon name="alert-circle-outline"></ion-icon> No products found.</p>
-                    )}
-                </div>
-            )}
 
 
-            <div className="small-banner text-md ">
+            <div className="small-banner text-md  mt-14 ">
                 <p>
                     Get 15% off your first purchase. Sign up. + Free shipping on orders over $75
                 </p>
             </div>
 
-            <div className="navbar-container">
+            <div className="navbar-container mb-64">
                 <div className="main-ad">
                     <div className="bgimage">
                         <img src="./images/nobgimgcropped.png" alt="" />
@@ -293,7 +196,7 @@ function UserHome() {
                             </span>
                         </div>
                         <div className="banner top-[50%] hidden   md:block">
-                            <div className="main-grid-container mb-8 pb-10 pt-2 bg-[#cc7f3c] w-full flex flex-col items-center  justify-center">
+                            <div className="main-grid-container mb-8 pb-10 pt-2 bg-gradient-to-r from-[#cc7f3c] to-[#CF9663] w-full flex flex-col items-center  justify-center">
                                 <div className="newin-text w-11/12 my-4">
                                     <span className="text-2xl newin text-white">
                                         NEW IN
@@ -304,7 +207,8 @@ function UserHome() {
                                         <div className="product-card" key={product._id}>
                                             <div className="product-image">
                                                 <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
-                                                <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.includes(product._id) ? "wishlist-btn" : "wishlist-btn1"} `}>
+                                                <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
+                                                    ? "wishlist-btn" : "wishlist-btn1"} `}>
                                                     ❤
                                                 </button>
                                             </div>
@@ -354,7 +258,8 @@ function UserHome() {
                             <div className="product-card" key={product._id}>
                                 <div className="product-image">
                                     <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
-                                    <button className="wishlist-btn">
+                                    <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
+                                        ? "wishlist-btn" : "wishlist-btn1"} `}>
                                         ❤
                                     </button>
                                 </div>
@@ -380,7 +285,15 @@ function UserHome() {
                 </div>
             </div>
 
+            <div className="offer relative w-full h-1/2">
+                <img className="w-full z-10" src="./images/freepik__expand__60200.png" alt="offer-ad" />
+                <div className="contact-container">
+                    <Contactpage />
+                </div>
 
+
+            </div>
+            <Footer />
         </>
     )
 }

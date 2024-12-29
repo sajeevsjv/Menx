@@ -70,6 +70,7 @@ const Cart = () => {
 
         console.log("response from 2nd useefect :", response);
         let data = response.data.data;
+        
         console.log("response data :", data);
         let cartWithQuantities = data.cart.map((item) => ({
           ...item.product,
@@ -149,7 +150,7 @@ const Cart = () => {
     <>
     <UserNavbar />
     <div className="max-w-4xl mt-20 mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">My Cart</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">My Cart</h2>
       <div className="space-y-6">
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
@@ -185,7 +186,7 @@ const Cart = () => {
       {cartItems.length > 0 &&
         <div className="mt-8  p-6  text-center">
           <h3 className="text-2xl font-bold text-gray-800">
-            Total: <span className="text-green-700 text-xl font-[timesnewroman] ">₹{totalPrice.toFixed(2)}</span>
+            Total: <span className="text-green-700 text-xl font-[mono] ">₹{totalPrice.toFixed(2)}</span>
           </h3>
           <button
             onClick={()=>placeOrder(cartItems)}

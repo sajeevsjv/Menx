@@ -292,7 +292,7 @@ exports.addToWishlist = async (req,res) =>{
 
     const user = await users.findOne({
       _id: user_id,
-      cart: {
+      wishlist: {
           $elemMatch: {
               product: product_id
           }
@@ -532,7 +532,7 @@ exports.placeOrder = async (req, res) => {
 exports.viewOrders = async (req,res) =>{
   try{
     let _id = req.params.id
-    let myorders = await orders.findOne({userId : _id}).populate("items.productId");
+    let myorders = await orders.find({userId : _id}).populate("items.productId").sort({ orderDate: -1 }); ;
     if(myorders){
       let response = success_function({
         statusCode : 200,

@@ -45,6 +45,8 @@ const ProductPage = () => {
     fetchData();
   }, []);
 
+  console.log("productData :", productData);
+
   useEffect(() => {
     const loadCart = async () => {
       console.log("loadcart executed")
@@ -78,6 +80,9 @@ const ProductPage = () => {
 
     loadCart();
   }, [])
+
+  console.log("cartitems :", cartItems);
+  console.log("productid :", productData?._id);
 
   return (
     <>
@@ -147,13 +152,13 @@ const ProductPage = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              {cartItems.includes(productData._id) ? 
-               <button className="flex-1 bg-black text-white py-2 text-center rounded hover:bg-gray-800">
-               Add to Cart
+              {cartItems.some(item => item._id === productData?._id) ? 
+               <button className="flex items-center flex-1 justify-center gap-1 bg-black  text-white py-2 text-center rounded hover:bg-gray-800">
+                <ion-icon name="cart-outline"></ion-icon> Update Cart
              </button>
               :
               <button className="flex-1 bg-black text-white py-2 text-center rounded hover:bg-gray-800">
-                Added to Cart
+                Add to Cart
               </button>
               }
               <button className="flex-1 border border-black py-2 text-center rounded hover:bg-gray-100">

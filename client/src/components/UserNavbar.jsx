@@ -9,7 +9,6 @@ import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
-import Login from "./Login";
 import { useCallback } from "react";
 
 const UserNavbar = () => {
@@ -17,7 +16,10 @@ const UserNavbar = () => {
   const [activeTab, setActiveTab] = useState("Home");
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState("");
   const [visibleSellerControls, setVisibleSellerControls] = useState(false);
+ 
 
   const toggleOffcanvas = () => {
     setIsOpen(!isOpen);
@@ -67,6 +69,44 @@ const UserNavbar = () => {
 
   }, [])
 
+  useEffect(() => {
+    const loadProducts = async () => {
+        const authToken = localStorage.getItem("authToken");
+        const user_id = localStorage.getItem("user_id");
+
+        try {
+            const response = await axios.get(`http://localhost:3003/getallproducts/${user_id}`, {
+                headers: { Authorization: `Bearer ${authToken}` },
+            });
+            setAllProducts(response.data.data);
+        } catch (error) {
+            console.error("Error fetching products:", error.response || error);
+        }
+    };
+    loadProducts();
+
+}, []);
+
+ // Filter products dynamically based on search input
+ useEffect(() => {
+  if (searchContent?.trim()) {
+      console.log("allproducts :",allProducts);
+      const lowerCaseSearch = searchContent.trim().toLowerCase(); // Normalize search input
+      const filtered = allProducts.filter((product) => {
+          const name = product.name?.toLowerCase() || ""; // Safeguard for product.name
+          const categories = Array.isArray(product.categories)
+              ? product.categories.map((cat) => cat.toLowerCase()) // Ensure all categories are lowercase
+              : []; // Fallback if categories is not an array
+          return (
+              name.includes(lowerCaseSearch) ||
+              categories.some((cat) => cat.includes(lowerCaseSearch)) // Check for a match in categories array
+          );
+      });
+      setFilteredProducts(filtered);
+  } else {
+      setFilteredProducts(allProducts); // Reset to all products when search is empty
+  }
+}, [searchContent, allProducts]);
 
 
   const handleTabClick = (tab) => {
@@ -84,7 +124,7 @@ const UserNavbar = () => {
     <>
       <nav className=" text-black bg-white border-b-[1px] p-2 fixed top-0 w-full z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-3">
-          <div className="flex items-center justify-between h-12">
+          <div className="flex items-center justify-between h-9">
             {/* Hamburger Menu Button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -126,9 +166,6 @@ const UserNavbar = () => {
 
               <Link to="/userhome">Home</Link>
               <Link to="/shop" >Shop</Link>
-              <Link to="shop" >Clothing</Link>
-              <Link to="shop" >Shoes</Link>
-              <Link to="shop" >Jewellery</Link>
               <Link to="">Contact</Link>
               {visibleSellerControls &&
                 <Link to="/myshop">MyShop</Link>
@@ -160,7 +197,9 @@ const UserNavbar = () => {
                   Go
                 </button>
               </div>
-
+              {visibleSellerControls &&
+                <button onClick={()=>navigate("/addproduct")} className="bg-orange-400 px-4 text-sm rounded-full text-white hover:bg-black py-[4px]">+ Add product</button>
+              }
               <ion-icon name="heart-outline" onClick={()=>navigate('/wishlist')}  />
               <ion-icon name="bag-outline" onClick={() => navigate("/cart")} />
 
@@ -235,6 +274,40 @@ const UserNavbar = () => {
           </div>
         </div>
       </nav>
+      
+
+      {searchContent && (
+                <div className="mt-32 grid grid-cols-3 items-center m-auto overflow-x-scroll auto-cols-[95%] sm:auto-cols-[80%] lg:auto-cols-[30%] gap-5 w-11/12">
+                    {filteredProducts?.length > 0 ? (
+                        filteredProducts.map((product) => (
+                            <div key={product.id} className="product-card">
+                                <div className="product-image relative">
+                                    <img
+                                        src={`http://localhost:3003/${product.product_images[0]}`}
+                                        alt={product.name || "Product Image"}
+                                        className="w-full h-60 object-cover rounded-md"
+                                    />
+                                    <button className="wishlist-btn  absolute top-2 right-2 bg-white p-1 rounded-full shadow">
+                                        ❤
+                                    </button>
+                                </div>
+                                <div className="product-details p-2">
+                                    <h3 className="product-name text-lg font-semibold truncate">{product.name}</h3>
+                                    <p className="product-price text-gray-600 mt-1"> ${product.price}</p>
+                                </div>
+                                <div className="product-actions mt-2">
+                                    <button className="add-to-cart flex items-center justify-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition">
+                                        <ion-icon name="cart"></ion-icon> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="col-span-3 text-center flex justify-center items-center gap-1 mb-8 text-gray-500"><ion-icon name="alert-circle-outline"></ion-icon> No products found.</p>
+                    )}
+                </div>
+            )}
+
 
       {/* Offcanvas Menu */}
       <div
