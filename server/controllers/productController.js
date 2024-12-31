@@ -227,6 +227,7 @@ exports.addToCart = async (req,res) =>{
   console.log("body :",req.body);
   let product_id  = new mongoose.Types.ObjectId(req.body.product_id);
   let user_id = new mongoose.Types.ObjectId(req.body.user_id);
+  let quantity = req.body.quantity || 1;
 
   try{
 
@@ -239,7 +240,7 @@ exports.addToCart = async (req,res) =>{
       }
   });
   
-
+  
   if(user){
     let response = error_function({
       statusCode : 400,
@@ -248,11 +249,11 @@ exports.addToCart = async (req,res) =>{
     res.status(response.statusCode).send(response);
     return;
   }
-
+ 
   let updateUser = await users.updateOne(
     { _id: user_id }, // Filter: Specifies which document to update
     {
-        $push: { cart: { product: product_id } } // Adds the product with a quantity of 1
+        $push: { cart: { product: product_id, quantity } } // Adds the product with a quantity of 1
     }
 );
 
@@ -282,6 +283,138 @@ exports.addToCart = async (req,res) =>{
     return;
   }
 } 
+
+// exports.updateCart = async (req,res) =>{
+//   console.log("body :",req.body);
+//   let product_id  = new mongoose.Types.ObjectId(req.body.product_id);
+//   let user_id = new mongoose.Types.ObjectId(req.body.user_id);
+//   let quantity = req.body.quantity || 1;
+
+//   try{
+
+//     const user = await users.findOne({
+//       _id: user_id,
+//       cart: {
+//           $elemMatch: {
+//               product: product_id
+//           }
+//       }
+//   });
+  
+
+//   if(user){
+//   let updateUser = await users.updateOne(
+//     { _id: user_id }, // Filter: Specifies which document to update
+//     {
+//         $push: { cart: { product: product_id, quantity } } // Adds the product with a quantity of 1
+//     }
+// );
+
+//   if(updateUser.modifiedCount > 0){
+//     let response = success_function({
+//       statusCode : 200,
+//       message : "quantity updated"
+//     })
+//     res.status(response.statusCode).send(response);
+//     return;
+//   }
+//   else{
+//     let response = error_function({
+//       statusCode : 400,
+//       message : "Failed to update quantity"
+//     })
+//     res.status(response.statusCode).send(response);
+//     return;
+//   }
+//   }
+//   return;
+// }
+//   catch(error){
+//     let response = error_function({
+//       statusCode : 400,
+//       message : error.message ?  error.message : error
+//     })
+//     res.status(response.statusCode).send(response);
+//     return;
+//   }
+// } 
+
+
+exports.updateCart = async (req, res) => {
+  console.log("body :", req.body);
+  const product_id = new mongoose.Types.ObjectId(req.body.product_id);
+  const user_id = new mongoose.Types.ObjectId(req.body.user_id);
+  const quantity = parseInt(req.body.quantity, 10) || 1;
+
+  if (quantity <= 0) {
+    const response = error_function({
+      statusCode: 400,
+      message: "Quantity must be a positive number",
+    });
+    return res.status(response.statusCode).send(response);
+  }
+
+  try {
+    // Check if the product already exists in the user's cart
+    const user = await users.findOne({
+      _id: user_id,
+      "cart.product": product_id,
+    });
+
+    if (user) {
+      // Update the quantity if the product exists in the cart
+      const updateUser = await users.updateOne(
+        { _id: user_id, "cart.product": product_id },
+        { $inc: { "cart.$.quantity": quantity } } // Increment the quantity
+      );
+
+      if (updateUser.modifiedCount > 0) {
+        const response = success_function({
+          statusCode: 200,
+          message: "Quantity updated successfully",
+        });
+        return res.status(response.statusCode).send(response);
+      } else {
+        const response = error_function({
+          statusCode: 400,
+          message: "Failed to update quantity",
+        });
+        return res.status(response.statusCode).send(response);
+      }
+    } else {
+      // Add the product to the cart if it doesn't exist
+      const addUserProduct = await users.updateOne(
+        { _id: user_id },
+        {
+          $push: {
+            cart: { product: product_id, quantity },
+          },
+        }
+      );
+
+      if (addUserProduct.modifiedCount > 0) {
+        const response = success_function({
+          statusCode: 200,
+          message: "Product added to cart successfully",
+        });
+        return res.status(response.statusCode).send(response);
+      } else {
+        const response = error_function({
+          statusCode: 400,
+          message: "Failed to add product to cart",
+        });
+        return res.status(response.statusCode).send(response);
+      }
+    }
+  } catch (error) {
+    const response = error_function({
+      statusCode: 400,
+      message: error.message || error,
+    });
+    return res.status(response.statusCode).send(response);
+  }
+};
+
 
 exports.addToWishlist = async (req,res) =>{
   console.log("body :",req.body);

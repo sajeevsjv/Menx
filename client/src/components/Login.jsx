@@ -63,9 +63,17 @@ const Login = () => {
             localStorage.setItem("user_id",user_id);
             localStorage.setItem("user_type",user_type_fromLogin);
             console.log("localStorage :", localStorage);
+            const admin_userType = "67472a35659bfab478d1ef7e"
+            if(user_type_fromLogin === admin_userType ){
+                setTimeout(() => {
+                    navigate("/dashboard")
+                }, 2000); 
+            }
+            else{
             setTimeout(() => {
                 navigate("/userhome")
             }, 2000); 
+        }
            
 
         }

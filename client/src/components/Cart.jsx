@@ -27,7 +27,8 @@ const Cart = () => {
 
   
   // Function to remove an item
-  const removeItem = async (id) => {
+  const removeItem = async (e,id) => {
+    e.stopPropagation();
     console.log("newww id :", id);
     const authToken = localStorage.getItem("authToken");
     try {
@@ -43,7 +44,6 @@ const Cart = () => {
       let message = response.data.message;
       // Immediately update the state to remove the item
       setCartItems((prevItems) => prevItems.filter((item) => item._id !== id));
-      toast.info(message);
 
     }
     catch (error) {
@@ -156,7 +156,8 @@ const Cart = () => {
           cartItems.map((item) => (
             <div
               key={item._id}
-              className="flex items-center bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition"
+              onClick={()=>{ navigate(`/productpage/${item._id}`)}}
+              className="flex items-center cursor-pointer bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition"
             >
               <img
                 src={`http://localhost:3003/${item.product_images[0]}`}
@@ -164,13 +165,13 @@ const Cart = () => {
                 className="w-20 h-20 object-cover rounded-md"
               />
               <div className="ml-4 flex-grow">
-                <h4 className="text-xl font-semibold text-gray-700">{item.name}</h4>
-                <p className="text-gray-600">Price: ₹{item.price}</p>
-                <p className="text-gray-600">Quantity: {item.quantity}</p>
+                <h4 className="text-md font-semibold text-gray-700">{item.name.slice(0,70)}...</h4>
+                <p className=" text-orange-400 font-mono">Price:₹{item.price}</p>
+                <p className="text-gray-600 font-mono">Quantity:{item.quantity}</p>
               </div>
               <button
-                onClick={() => removeItem(item._id)}
-                className="text-red-500 font-semibold hover:text-red-600 transition"
+                onClick={(e) => removeItem(e,item._id)}
+                className="text-white text-xs px-3 py-1 bg-orange-400 font-semibold rounded-full transition"
               >
                 Remove
               </button>
@@ -190,7 +191,7 @@ const Cart = () => {
           </h3>
           <button
             onClick={()=>placeOrder(cartItems)}
-            className="mt-4 px-6 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition"
+            className="mt-4 px-6 py-2 bg-black text-white rounded-md font-semibold hover:bg-orange-400 hover:-translate-y-1 duration-300 transition"
           >
             Proceed to Checkout
           </button>

@@ -362,8 +362,9 @@ const handleSignOut = () => {
   const token = localStorage.getItem("authToken");
   if (!token) {
     toast.success('succesfully loggedout');
+   
     setTimeout(() => {
-      navigate("userhome")
+      navigate("/userhome");
     }, 2000);
   } else {
     toast.error("Failed to logout");

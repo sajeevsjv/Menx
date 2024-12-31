@@ -13,6 +13,7 @@ import Contactpage from "./Contact"
 
 function UserHome() {
 
+    const navigate = useNavigate();
     const [visibleSellerControls, setVisibleSellerControls] = useState(false);
     const [newProducts, setNewProducts] = useState([]);
     const [cartItems, setCartItems] = useState([]);
@@ -78,7 +79,8 @@ function UserHome() {
         loadCart();
     }, [])
 
-    const addToCart = async (id) => {
+    const addToCart = async (e,id) => {
+        e.stopPropagation();
         const user_id = localStorage.getItem("user_id");
         const product_id = id;
         const authToken = localStorage.getItem("authToken");
@@ -204,7 +206,7 @@ function UserHome() {
                                 </div>
                                 <div className="newin-section grid grid-flow-col overflow-x-scroll auto-cols-[95%] sm:auto-cols-[80%]  lg:auto-cols-[30%]   gap-4 w-11/12">
                                     {newProducts?.length > 0 ? newProducts.map((product) => (
-                                        <div className="product-card" key={product._id}>
+                                        <div className="product-card cursor-pointer" onClick={()=>{ navigate(`/productpage/${product._id}`)}} key={product._id}>
                                             <div className="product-image">
                                                 <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
                                                 <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
@@ -216,8 +218,8 @@ function UserHome() {
                                                 <h3 className="product-name">
                                                     {product.name.slice(0, 30)}...
                                                 </h3>
-                                                <p className="product-price">
-                                                    {product.price}
+                                                <p className="text-orange-500 font-mono">
+                                                ₹{product.price}
                                                 </p>
                                             </div>
                                             <div className="product-actions">
@@ -228,7 +230,7 @@ function UserHome() {
                                                 ) : (
                                                     <button
                                                         className="add-to-cart flex justify-center gap-1"
-                                                        onClick={() => addToCart(product._id)}
+                                                        onClick={(e) => addToCart(e,product._id)}
                                                     >
                                                         <ion-icon name="cart"></ion-icon> Add to Cart
                                                     </button>
@@ -255,7 +257,7 @@ function UserHome() {
                     </div>
                     <div className="newin-section grid grid-flow-col overflow-x-scroll auto-cols-[95%] sm:auto-cols-[80%]  lg:auto-cols-[30%]   gap-4 w-11/12">
                         {newProducts?.length > 0 ? newProducts.map((product) => (
-                            <div className="product-card" key={product._id}>
+                            <div className="product-card cursor-pointer" onClick={()=>{ navigate(`/productpage/${product._id}`)}} key={product._id}>
                                 <div className="product-image">
                                     <img src={`http://localhost:3003/${product.product_images[0]}`} alt="Product Image" />
                                     <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
@@ -267,8 +269,8 @@ function UserHome() {
                                     <h3 className="product-name">
                                         {product.name.slice(0, 30)}...
                                     </h3>
-                                    <p className="product-price">
-                                        {product.price}
+                                    <p className="product-price font-mono">
+                                    ₹{product.price}
                                     </p>
                                 </div>
                                 <div className="product-actions">
@@ -287,7 +289,7 @@ function UserHome() {
 
             <div className="offer relative w-full h-1/2">
                 <img className="w-full z-10" src="./images/freepik__expand__60200.png" alt="offer-ad" />
-                <div className="contact-container">
+                <div className="contact-container mb-20">
                     <Contactpage />
                 </div>
 

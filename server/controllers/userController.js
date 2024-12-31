@@ -216,7 +216,7 @@ exports.signup = async function (req, res) {
 
 exports.getAllUsers = async(req, res) => {
   try{
-    let allUsers = await users.find();
+    let allUsers = await users.find().populate("user_type");
 
     if(allUsers){
       let response = success_function({

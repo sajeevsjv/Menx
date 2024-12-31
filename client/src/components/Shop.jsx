@@ -178,11 +178,9 @@ const Shop = () => {
     setFilteredProducts(allProducts);
   };
 
-  const handleProductCardClick = (id) => {
-    navigate(`/productpage/${id}`)
-  }
 
-  const addToCart = async (id) => {
+  const addToCart = async (e, id) => {
+    e.stopPropagation();
     const user_id = localStorage.getItem("user_id");
     const product_id = id;
     const authToken = localStorage.getItem("authToken");
@@ -248,7 +246,6 @@ const Shop = () => {
           { user_id, product_id },
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
-        toast.success(response.data.message);
 
         // Update wishlist state
         setWishlistItems((prev) => [...prev, { _id: product_id }]);
@@ -258,7 +255,6 @@ const Shop = () => {
           `http://localhost:3003/removefromwishlist/${product_id}`,
           { headers: { Authorization: `Bearer ${authToken}` } }
         );
-        toast.success(response.data.message);
 
         // Update wishlist state
         setWishlistItems((prev) => prev.filter((item) => item._id !== product_id));
@@ -269,9 +265,7 @@ const Shop = () => {
     }
   };
 
-  console.log("wishlisteitemssssssssssssssssss :", wishlistItems);
 
-  console.log("cartItems :", cartItems);
 
   return (
     <>
@@ -339,8 +333,13 @@ const Shop = () => {
           </div>
           <div className="newin-section grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3  justify-center items-center  gap-4  w-11/12">
             {filteredProducts.map((product) => (
-              <div className="product-card">
-                <div className="product-image" onClick={() => handleProductCardClick(product._id)}>
+              <div
+                className="product-card"
+                onClick={() => {
+                  navigate(`/productpage/${product._id}`);
+                }}
+              >
+                <div className="product-image">
                   {product.product_images?.length > 0 ? (
                     <img
                       src={`http://localhost:3003/${product.product_images[0]}`}
@@ -349,37 +348,47 @@ const Shop = () => {
                   ) : (
                     <p>No Image Available</p>
                   )}
-                  <button onClick={(e) => addToWishlist(e, product._id)} className={`${wishlistItems.some((item) => item._id === product._id)
-                    ? "wishlist-btn" : "wishlist-btn1"} `}>
+                  <button
+                    onClick={(e) => addToWishlist(e, product._id)}
+                    className={`${wishlistItems.some((item) => item._id === product._id)
+                        ? "wishlist-btn"
+                        : "wishlist-btn1"
+                      }`}
+                  >
                     ❤
                   </button>
                 </div>
 
-                <div className="product-details h-32">
-                  <h3 className="product-name cursor-pointer" onClick={() => handleProductCardClick(product._id)} >
+                <div className="product-details h-36">
+                  <h3
+                    className="product-name cursor-pointer"
+                    onClick={() => handleProductCardClick(product._id)}
+                  >
                     {product.name.slice(0, 35)}...
                   </h3>
-                  <p className="product-price">
-                    ${product.price}
-                  </p>
+                  <span className="line-through text-xs">{product.mrp}</span>
+                  <p className="font-mono text-orange-500">₹{product.price}</p>
                 </div>
+
                 <div className="product-actions">
                   {cartItems.length > 0 && cartItems.includes(product._id) ? (
                     <button className="bg-orange-400 rounded-sm text-white p-3 flex justify-center gap-1">
                       <ion-icon name="checkbox"></ion-icon> Added to Cart
                     </button>
-                  ) : (
+                  ) : product.stock > 0 ? (
                     <button
                       className="add-to-cart flex justify-center gap-1"
-                      onClick={() => addToCart(product._id)}
+                      onClick={(e) => addToCart(e, product._id)}
                     >
                       <ion-icon name="cart"></ion-icon> Add to Cart
                     </button>
+                  ) : (
+                    <button className="out-of-stock-btn">Out of Stock</button>
                   )}
-
                 </div>
               </div>
             ))}
+
 
             {filteredProducts.length === 0 &&
               <div className="no-data w-[90%]  flex justify-center items-center absolute top-0">

@@ -54,6 +54,10 @@ module.exports = {
       {
         _id: "6758508b02b62a1ec2a56802",
         category: "Wallets"
+      },
+      {
+        _id: "677229aafb511c7f85dc961c",
+        category: " Accessories",
       }
 
     ]

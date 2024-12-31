@@ -1,9 +1,10 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-6">
+    <footer className="bg-gradient-to-b bg-black text-white py-6">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -16,17 +17,17 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="/shop" className="text-sm text-gray-400 hover:text-white">Shop</a></li>
-              <li><a href="/about" className="text-sm text-gray-400 hover:text-white">About Us</a></li>
-              <li><a href="/contact" className="text-sm text-gray-400 hover:text-white">Contact</a></li>
-              <li><a href="/faq" className="text-sm text-gray-400 hover:text-white">FAQ</a></li>
+              <li><Link to="/shop" className="text-sm text-gray-400 hover:text-white">Shop</Link></li>
+              <li><Link to="/about" className="text-sm text-gray-400 hover:text-white">About Us</Link></li>
+              <li><Link to="/contact" className="text-sm text-gray-400 hover:text-white">Contact</Link></li>
+              <li><Link to="/faq" className="text-sm text-gray-400 hover:text-white">FAQ</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-2">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white" aria-label="Facebook">
+              <a href="" className="text-gray-400 hover:text-white" aria-label="Facebook">
                 <FaFacebookF size={20} />
               </a>
               <a href="#" className="text-gray-400 hover:text-white" aria-label="Twitter">

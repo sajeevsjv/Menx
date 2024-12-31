@@ -14,6 +14,7 @@ router.post("/addproduct",setaccessControl("3"),productController.addProduct);
 router.get("/getallproducts/:id",productController.getAllProducts);
 router.get("/getsingleproduct/:id",productController.getSingleProduct);
 router.post("/addtocart",setaccessControl("2,3"),productController.addToCart);
+router.put("/updatecart",setaccessControl("2,3"),productController.updateCart);
 router.post("/addtowishlist",setaccessControl("2,3"),productController.addToWishlist);
 router.delete("/deletefromcart/:id",setaccessControl("2,3"),productController.deleteFromCart);
 router.delete("/removefromwishlist/:id",setaccessControl("2,3"),productController.removeFromWishlist);

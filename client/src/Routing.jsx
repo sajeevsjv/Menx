@@ -17,7 +17,7 @@ import Offcanvas from "./components/Offcanvas";
 import ShippingForm from "./components/ShippingForm";
 import MyShop from "./components/MyShop";
 import Orders from "./components/Orders";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./components/Dashboard"
 import Wishlist from "./components/Wishlist";
 import ContactPage from "./components/Contact";
 import Footer from "./components/Footer";
@@ -33,8 +33,6 @@ function Routing(){
             <Route path={"/usernavbar"} element={<UserNavbar/>} />
             <Route path={"/login"} element= {<Login />} />
             <Route path={"/userhome"} element={<UserHome />} />
-            <Route path={"/sellerhome"} element={<SellerHome />} />
-            <Route path={"/sellernavbar"} element={<SellerNavbar />} />
             <Route path={"/addproduct"} element={< AddProduct />} />
             <Route path={"/categories"} element={< CategorySelector />} />
             <Route path={"/shop"} element={<Shop />} />
