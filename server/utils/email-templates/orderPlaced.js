@@ -1,8 +1,8 @@
-exports.orderPlaced = function (name, cartItems) {
+exports.orderPlaced = function (name, productsInfo) {
   return new Promise(async (resolve, reject) => {
     try {
       // Create the email template
-      let productRows = cartItems.map(item => {
+      let productRows = productsInfo.map(item => {
         return `
           <tr>
             <td>${item.name}</td>
@@ -12,7 +12,7 @@ exports.orderPlaced = function (name, cartItems) {
         `;
       }).join('');
 
-      let totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+      let totalPrice = productsInfo.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
       let template = `
         <!DOCTYPE html>

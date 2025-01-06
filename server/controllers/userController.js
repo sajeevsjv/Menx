@@ -25,6 +25,7 @@ exports.signup = async function (req, res) {
 
     let user_type_fromSignup = body.user_type;
     console.log("user_type from input :",user_type_fromSignup);
+    
     let usertype = await  user_types.findOne({user_type : user_type_fromSignup});
     if(usertype){
       body.user_type = usertype._id;
@@ -238,7 +239,7 @@ exports.getAllUsers = async(req, res) => {
 exports.getSingleUser = async (req,res) =>{
   try{
     let _id = req.params.id;
-    let user = await users.findOne({_id}).populate('cart.product').populate('wishlist.product');
+    let user = await users.findOne({_id}).populate('cart.product').populate('wishlist.product').populate('user_type');
     if(user){
       let response = success_function({
         statusCode : 200,

@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import AdminNav from "./AdminNav";
+import AllProducts from "./AllProducts";
+import { useContext } from "react";
+import { DataContext } from "./DataProvider";
+import Breadcrumb from "./Breadcrumb";
+import BlockedProducts from "./BlockedProducts";
+
+
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,7 +17,13 @@ const Dashboard = () => {
   const [allBuyers, setAllBuyers] = useState([]);
   const [allSellers, setAllSellers] = useState([]);
   const [allProducts, setAllProducts] = useState([]); // Placeholder for products data
-  const [currentView, setCurrentView] = useState("allusers");
+  const [noOfProducts, setNoOfProducts] = useState(0);
+  const [noOfBlockedProducts, setNoOfBlockedProducts] = useState(0);
+  const { currentView, setCurrentView} = useContext(DataContext);
+
+  const handleAdminPanelVisible = () => {
+    setIsAdminPanelVisible(!isAdminPanelVisible)
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +52,27 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
- 
+  useEffect(() => {
+    const loadProducts = async () => {
+      const authToken = localStorage.getItem("authToken");
+      const user_id = localStorage.getItem("user_id");
+      try {
+        const response = await axios.get(`http://localhost:3003/getallproducts/${user_id}`, {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        const unblockedProducts = response.data.data.filter(product => product.isBlocked === false);
+        const blockedProducts = response.data.data.filter(product => product.isBlocked === true);
+        setNoOfBlockedProducts(blockedProducts.length);
+        setNoOfProducts(unblockedProducts.length);
+      } catch (error) {
+        console.error("Error fetching products:", error.response || error);
+      }
+    };
+    loadProducts();
+
+  }, []);
+
+
 
   const renderTable = (data, title) => (
     <div className="user-list">
@@ -86,34 +119,13 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-orange-500 text-white flex flex-col">
-        <div className="p-4 text-2xl font-bold">Admin Panel</div>
-        <nav className="flex-1">
-          <ul>
-            <li onClick={() => setCurrentView("allusers")} className="p-4 hover:bg-black cursor-pointer">
-              All Users
-            </li>
-            <li onClick={() => setCurrentView("buyers")} className="p-4 hover:bg-black cursor-pointer">
-              Buyers
-            </li>
-            <li onClick={() => setCurrentView("sellers")} className="p-4 hover:bg-black cursor-pointer">
-              Sellers
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-         <AdminNav />
-         
-         
-
+        <AdminNav />
         {/* Content */}
-        <main className="p-6 flex-1 overflow-y-auto">
+        <main className="p-6 flex-1 mt-20  overflow-y-auto">
           {/* Overview Cards */}
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-5 gap-6">
             <div onClick={() => setCurrentView("buyers")} className="bg-white p-6 shadow-md rounded-lg">
               <h3 className="text-lg font-semibold mb-2">Total Buyers</h3>
               <p className="text-2xl font-bold">{allBuyers.length}</p>
@@ -122,9 +134,17 @@ const Dashboard = () => {
               <h3 className="text-lg font-semibold mb-2">Total Sellers</h3>
               <p className="text-2xl font-bold">{allSellers.length}</p>
             </div>
-            <div className="bg-white p-6 shadow-md rounded-lg">
+            <div onClick={() => setCurrentView("products")} className="bg-white p-6 shadow-md rounded-lg">
               <h3 className="text-lg font-semibold mb-2">Total Products</h3>
-              <p className="text-2xl font-bold">{allProducts.length}</p>
+              <p className="text-2xl font-bold">{noOfProducts}</p>
+            </div>
+            <div onClick={() => setCurrentView("blockedproducts")} className="bg-red-200 p-6 shadow-md rounded-lg">
+              <h3 className="text-lg font-semibold mb-2">Blocked Products</h3>
+              <p className="text-2xl font-bold">{noOfBlockedProducts}</p>
+            </div>
+            <div onClick={() => setCurrentView("products")} className="bg-white p-6 shadow-md rounded-lg">
+              <h3 className="text-lg font-semibold mb-2">Blocked Users</h3>
+              <p className="text-2xl font-bold">{noOfProducts}</p>
             </div>
           </div>
 
@@ -132,6 +152,8 @@ const Dashboard = () => {
           {currentView === "allusers" && renderTable(allUsers, "All Users")}
           {currentView === "buyers" && renderTable(allBuyers, "All Buyers")}
           {currentView === "sellers" && renderTable(allSellers, "All Sellers")}
+          {currentView === "products" && <AllProducts />}
+          {currentView === "blockedproducts" && <BlockedProducts />} 
         </main>
       </div>
     </div>

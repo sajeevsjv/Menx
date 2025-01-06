@@ -20,6 +20,10 @@ const Products = mongoose.Schema(
       required: true,
       min: 0,
     },
+    isBlocked :{
+      type : Boolean,
+      default : false
+    },
     colors: {
       type: [String],
       required: true,

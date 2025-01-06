@@ -12,16 +12,22 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null); // State to track the selected image
   const [cartItems, setCartItems] = useState([]);
+  const [isAddressSelectingFormVisible, setIsAddressSelectingFormVisible] = useState(false);
+  const [address, setAddress] = useState();
+  
+  
 
 
   const handleQuantityChange = (type) => {
     setQuantity((prev) =>
       type === "increment" ? prev + 1 : prev > 1 ? prev - 1 : prev
     );
+
+
   };
 
-
   const { id } = useParams();
+
   useEffect(() => {
     function fetchData() {
       const authToken = localStorage.getItem("authToken");
@@ -47,6 +53,41 @@ const ProductPage = () => {
   }, []);
 
   console.log("productData :", productData);
+
+  const placeOrder = async () => {
+    const user_id = localStorage.getItem("user_id");
+    const authToken = localStorage.getItem("authToken");
+    const processingToast = toast.loading("Processing your order...");
+    const productsInfo = [{ ...productData, quantity }];
+    const isFromCart = false;
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3003/placeorder/${user_id}`,
+        { productsInfo, totalAmount: productData.price * quantity, isFromCart },
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      toast.update(processingToast, {
+        render: response.data.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      setTimeout(() => navigate("/shop"), 2000);
+    } catch (error) {
+      console.log("error :", error);
+      toast.update(processingToast, {
+        render: error.response?.data.message || "An unexpected error occurred.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  };
 
   useEffect(() => {
     const loadCart = async () => {
@@ -85,13 +126,13 @@ const ProductPage = () => {
   const addToCart = async (id) => {
     const user_id = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("authToken");
-  
+
     if (!user_id || !authToken) {
       toast.error("Please login to continue.");
       setIsAddingToCart(false);
       return;
     }
-  
+
     try {
       // Update the cart UI optimistically
       setCartItems((prevCartItems) => {
@@ -106,7 +147,7 @@ const ProductPage = () => {
         // Add a new item to the cart
         return [...prevCartItems, { _id: id, quantity }];
       });
-  
+
       const response = await axios.post(
         "http://localhost:3003/addtocart",
         { user_id, product_id: id, quantity },
@@ -114,7 +155,7 @@ const ProductPage = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
-  
+
       toast.success(response.data.message, {
         autoClose: 2000,
         position: "top-center",
@@ -133,13 +174,13 @@ const ProductPage = () => {
   const updateCart = async (id) => {
     const user_id = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("authToken");
-  
+
     if (!user_id || !authToken) {
       toast.error("Please login to continue.");
       setIsAddingToCart(false);
       return;
     }
-  
+
     try {
       // Update the cart UI optimistically
       setCartItems((prevCartItems) => {
@@ -154,15 +195,15 @@ const ProductPage = () => {
         // Add a new item to the cart
         return [...prevCartItems, { _id: id, quantity }];
       });
-  
-      const response = await axios.put(
+
+      const response = await axios.patch(
         "http://localhost:3003/updatecart",
         { user_id, product_id: id, quantity },
         {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
-  
+
       toast.success(response.data.message, {
         autoClose: 2000,
         position: "top-center",
@@ -173,9 +214,9 @@ const ProductPage = () => {
         prevCartItems.filter((item) => item._id !== id)
       );
       toast.error(error.response?.data?.message || "Failed to add to cart.");
-    } 
+    }
   };
-  
+
 
   console.log("cartitems :", cartItems);
   console.log("productid :", productData?._id);
@@ -183,6 +224,53 @@ const ProductPage = () => {
   return (
     <>
       <UserNavbar />
+      {/* adress selecting box after clicking proceed */}
+      {isAddressSelectingFormVisible && (
+        <div
+          onClick={() => setIsAddressSelectingFormVisible(false)}
+          className="fixed w-full h-[100vh] top-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="p-6 max-w-lg mx-auto bg-white shadow-lg rounded-lg border border-gray-200 animate-scaleIn transition-transform duration-300 ease-out zoom-in-animation"
+          >
+            <h2 className="text-lg font-semibold text-gray-700 mb-4 lowercase">
+              Select an address to deliver your product.
+            </h2>
+            <div className="space-y-4">
+              {address?.map((data, index) => (
+                <div
+                  key={index}
+                  className="flex items-center p-4 bg-gray-100 rounded-lg shadow-sm border hover:bg-gray-200 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="address"
+                    checked="true" // Fix for correct radio button selection
+                    value={data.address}
+                    id={`address-${index}`}
+                    className="w-5 h-5 text-blue-600"
+                  />
+                  <label
+                    htmlFor={`address-${index}`}
+                    className="ml-3 text-gray-600 font-medium"
+                  >
+                    {data.address}, {data.city}, {data.state}, {data.country} -{" "}
+                    {data.pincode}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={placeOrder}
+              className="mt-6 w-full px-6 py-3 bg-orange-400 transition-all text-white hover:-translate-y-1 duration-200 rounded-lg hover:bg-black"
+            >
+              Place Order
+            </button>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <h3>Loading...</h3>
       ) : error ? (
@@ -218,6 +306,7 @@ const ProductPage = () => {
             <div className="product-details xs:w-[100%] lg:w-[45%]">
               <h1 className="text-2xl font-bold mb-2">{productData.name}</h1>
               <p className="text-gray-500 text-sm mb-2">Seller: {productData.seller}</p>
+              <p className="line-through pl-1 font-mono text-gray-400">{productData.mrp}</p>
               <h2 className="text-xl font-semibold mb-4 font-mono text-orange-500">₹{productData.price}</h2>
               <button
                 className="flex items-center justify-between w-full text-left text-lg font-semibold border-b-2 border-gray-300 py-2"
@@ -262,9 +351,9 @@ const ProductPage = () => {
                     <ion-icon name="cart-outline"></ion-icon> Add to Cart
                   </button>
                 )}
-                <button className="flex-1 border text-black transition-all hover:-translate-y-[1px] duration-300 hover:text-orange-500 border-black py-2 text-center rounded hover:bg-black">
-                Buy Now
-              </button>
+                <button onClick={()=>setIsAddressSelectingFormVisible(true)} className="flex-1 border text-black transition-all hover:-translate-y-[1px] duration-300 hover:text-orange-500 border-black py-2 text-center rounded hover:bg-black">
+                  Buy Now
+                </button>
 
               </div>
               <CollapsibleSection title="PRODUCT INFO">

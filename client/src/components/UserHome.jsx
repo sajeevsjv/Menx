@@ -27,20 +27,28 @@ function UserHome() {
     useEffect(() => {
         const loadNewProducts = async () => {
             const authToken = localStorage.getItem("authToken");
-            const user_id = localStorage.getItem("user_id");
+            let user_id = localStorage.getItem("user_id");
+    
+            // Use guest_userId if user_id is not present
+            const guest_userId = "67757636a49d858023ab6549";
+            user_id = user_id || guest_userId;
+    
             try {
                 const response = await axios.get(`http://localhost:3003/newproducts/${user_id}`, {
                     headers: { Authorization: `Bearer ${authToken}` },
+                
                 });
-                setNewProducts(response.data.data);
-                console.log("new in response :", response);
+                let  unblockedProducts  = response.data.data.filter(product => product.isBlocked == false);
+                setNewProducts(unblockedProducts);
+                console.log("new in response:", response);
             } catch (error) {
                 console.error("Error fetching products:", error.response || error);
             }
         };
+    
         loadNewProducts();
-
     }, []);
+    
 
 
 

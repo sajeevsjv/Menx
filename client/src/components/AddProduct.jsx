@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import axios from "axios"
-import SellerNavbar from "./SellerNavbar";
-import { ToastContainer, toast } from 'react-toastify';
+import axios from "axios";
+import UserNavbar from "./UserNavbar";
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const sizeOptions = {
   Clothing: ["SM", "M", "L", "XL", "2XL", "3XL"],
@@ -20,21 +18,20 @@ export default function AddProduct() {
     mrp: "",
     price: "",
     colors: "",
-    categories: [], 
-    product_images: [], 
+    categories: [],
+    product_images: [],
     Stock: 0,
     sizes: [],
     seller: ""
   });
 
-
   const [categoryStructure, setCategoryStructure] = useState({});
-  const [newColor, setNewColor] = useState("#000000"); // Temporary color input state
+  const [newColor, setNewColor] = useState("#000000");
+  const [selectedMainCategory, setSelectedMainCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
-
-  useEffect(()=>{
+  useEffect(() => {
     const loadCategories = async () => {
-      console.log("loadcart executed")
       const authToken = localStorage.getItem("authToken");
       try {
         let response = await axios({
@@ -43,103 +40,41 @@ export default function AddProduct() {
           headers: {
             "Authorization": `Bearer ${authToken}`
           }
-        })
+        });
 
-        console.log("response  :", response);
         let categoryData = response.data.data;
-        console.log("categoryData:", categoryData);
-         // Transform fetched categories into the desired structure
-         const transformedCategories = categoryData.reduce((acc, category) => {
+        const transformedCategories = categoryData.reduce((acc, category) => {
           acc[category.category] = category.sub_categories || [];
           return acc;
         }, {});
-
-        console.log("Transformed categories: ", transformedCategories);
         setCategoryStructure(transformedCategories);
-
       }
       catch (error) {
-        if (error.response) {
-          console.log("eror response :", error.response);
-          let message = error.response.data.message;
-        }
-        console.log("error :", error);
+        console.error("Error loading categories:", error);
       }
     };
 
     loadCategories();
-  },[])
-
-  const addColor = (color) => {
-    if (!data.colors.includes(color)) {
-      setData((prevData) => ({
-        ...prevData,
-        colors: [...prevData.colors, color],
-      }));
-    }
-  };
-
-  const removeColor = (color) => {
-    setData((prevData) => ({
-      ...prevData,
-      colors: prevData.colors.filter((c) => c !== color),
-    }));
-  };
+  }, []);
 
   const handleChange = (e) => {
-    console.log("handle change worked");
     const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
 
-    if (name === "price" || name === "mrp") {
+  const handleNumberChange = (e, fieldName) => {
+    const value = e.target.value;
+    if (value >= 0) {
       setData((prevData) => ({
         ...prevData,
-        [name]: parseFloat(value), // Use parseInt(value) if you expect integers
-      }));
-    } else {
-      setData((prevData) => ({
-        ...prevData,
-        [name]: value,
+        [fieldName]: value,
       }));
     }
   }
 
-  const toggleCategory = (mainCategory, subCategory = null) => {
-    setData((prevData) => {
-      const existingCategories = new Set(prevData.categories);
-
-      // Handle main category toggle
-      if (!subCategory) {
-        if (existingCategories.has(mainCategory)) {
-          // Remove main category and all its subcategories
-          categoryStructure[mainCategory].forEach((sub) => existingCategories.delete(sub));
-          existingCategories.delete(mainCategory);
-        } else {
-          // Add main category
-          existingCategories.add(mainCategory);
-        }
-      } else {
-        // Handle subcategory toggle
-        if (existingCategories.has(subCategory)) {
-          // Remove subcategory
-          existingCategories.delete(subCategory);
-
-          // If no subcategories are left, remove the main category
-          const hasOtherSelected = categoryStructure[mainCategory].some((sub) =>
-            existingCategories.has(sub)
-          );
-          if (!hasOtherSelected) existingCategories.delete(mainCategory);
-        } else {
-          // Add subcategory and ensure main category is included
-          existingCategories.add(subCategory);
-          existingCategories.add(mainCategory);
-        }
-      }
-
-      return { ...prevData, categories: Array.from(existingCategories) };
-    });
-  };
-
-  // Toggle size selection
   const toggleSize = (size) => {
     setData((prevData) => ({
       ...prevData,
@@ -149,14 +84,12 @@ export default function AddProduct() {
     }));
   };
 
-  // Get available size options based on category
   const getAvailableSizes = () => {
     if (data.categories.includes("Clothing")) return sizeOptions.Clothing;
     if (data.categories.includes("Shoes")) return sizeOptions.Shoes;
     return [];
   };
 
-  // Handle image drop and convert to Base64
   const onDrop = (acceptedFiles) => {
     acceptedFiles.forEach((file) => {
       const reader = new FileReader();
@@ -164,11 +97,11 @@ export default function AddProduct() {
         setData((prevData) => ({
           ...prevData,
           product_images: [
-            ...prevData.product_images, reader.result  // Store Base64 string
+            ...prevData.product_images, reader.result
           ],
         }));
       };
-      reader.readAsDataURL(file); // Convert file to Base64 string
+      reader.readAsDataURL(file);
     });
   };
 
@@ -179,21 +112,32 @@ export default function AddProduct() {
     },
   });
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("data :", data);
-
+  
+    // Validation: Check if price, mrp, or stock is 0
+    if (data.price === 0 || data.mrp === 0 || data.Stock === 0) {
+      toast.info("Price, MRP, and Stock cannot be zero.");
+      return;
+    }
+  
+    // Basic validation checks
+    if (!data.name || !data.description || !data.price || !data.mrp || !data.Stock) {
+      toast.error("Please fill in all the required fields.");
+      return;
+    }
+  
+    // Additional validation for price, MRP, and stock to be positive numbers
+    if (data.price <= 0 || data.mrp <= 0 || data.Stock < 0) {
+      toast.error("Price, MRP, and Stock must be positive numbers.");
+      return;
+    }
+  
     const authToken = localStorage.getItem("authToken");
-    console.log("authtoken :", authToken);
-
     const user_id = localStorage.getItem("user_id");
     const payload = { ...data, seller: user_id };
-    
-
-
+  
     try {
-      
       let response = await axios({
         url: "http://localhost:3003/addproduct",
         method: 'POST',
@@ -201,35 +145,25 @@ export default function AddProduct() {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${authToken}`
         },
-        data : payload
-
-      })
-      console.log("response :", response);
-      let message = response.data.message;
-      // alert(message);
-      toast.success(message);
-
+        data: payload
+      });
+      toast.success(response.data.message);
     }
     catch (error) {
-      if (error.response) {
-        console.log("response msg ", error.response.data.message);
-        return
-      }
-      console.log(error.message ? error.message : error)
+      console.error("Error submitting product:", error);
     }
-
-  }
+  };
+  
 
   return (
     <>
-      <SellerNavbar />
-      <ToastContainer />
+      <UserNavbar />
       <div className="main-product-form-container mt-[100px] mb-[100px] w-3/4 m-auto border-2 inset-10 bg-[#f8f8f8] rounded-lg p-5">
         <div className="product-form-container bg-transparent p-4">
           <h2 className="text-center text-md uppercase tracking-[4px] font-medium text-[#ffa333]">
             Add Product
           </h2>
-          <form action="/submit" method="POST" enctype="multipart/form-data" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Product Name</label>
               <input
@@ -237,111 +171,113 @@ export default function AddProduct() {
                 id="name"
                 name="name"
                 placeholder="Enter product name"
-                required=""
                 onChange={handleChange}
+                required
               />
             </div>
+
+            {/* Product Description */}
             <div className="form-group">
               <label htmlFor="description">Description</label>
               <textarea
                 id="description"
                 name="description"
-                rows="4"
                 placeholder="Enter product description"
-                required=""
                 onChange={handleChange}
+                required
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="mrp">MRP</label>
-              <input
-                type="number"
-                id="mrp"
-                name="mrp"
-                min="1"
-                step="1"
-                placeholder="Enter MRP"
-                required=""
-                onChange={handleChange}
-              />
-            </div>
+
+            {/* Price and MRP */}
             <div className="form-group">
               <label htmlFor="price">Price</label>
               <input
                 type="number"
                 id="price"
                 name="price"
+                placeholder="Enter product price"
+                value={data.price}
+                onChange={(e) => handleNumberChange(e, 'price')}
                 min="1"
-                step="1"
-                placeholder="Enter price"
-                required=""
-                onChange={handleChange}
+                required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="price">Stock</label>
-              <input type="number"
-                name="stock"
+              <label htmlFor="mrp">MRP</label>
+              <input
+                type="number"
+                id="mrp"
+                name="mrp"
+                placeholder="Enter product MRP"
+                value={data.mrp}
+                onChange={(e) => handleNumberChange(e, 'mrp')}
                 min="1"
-                step="1"
-                onChange={handleChange}
+                required
               />
             </div>
 
-            {/* Category Selection Section */}
-            <div className="w-full mx-auto pt-2">
-              <h2 className="text-md mb-4 text-gray-800">Select Categories</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {Object.keys(categoryStructure).map((mainCategory) => (
-                  <div key={mainCategory} className="border p-4 rounded-lg bg-gray-100">
-                    {/* Main Category */}
-                    <label className="flex pb-3 items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={data.categories.includes(mainCategory)}
-                        onChange={() => toggleCategory(mainCategory)}
-                        className="h-5 w-5 text-orange-400 focus:ring-orange-400 border-gray-300 rounded"
-                      />
-                      <span className="text-gray-700 text-sm font-semibold">
-                        {mainCategory}
-                      </span>
-                    </label>
+            {/* Stock Quantity */}
+            <div className="form-group">
+              <label htmlFor="Stock">Stock</label>
+              <input
+                type="number"
+                id="Stock"
+                name="Stock"
+                placeholder="Enter stock quantity"
+                value={data.Stock}
+                onChange={(e) => handleNumberChange(e, 'Stock')}
+                min="1"
+                required
+              />
+            </div>
 
-                    {/* Subcategories */}
-                    <div className="ml-6 mt-2 grid grid-cols-1 gap-2">
-                      {categoryStructure[mainCategory].map((subCategory) => (
-                        <label
-                          key={subCategory}
-                          className="flex items-center space-x-2 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={data.categories.includes(subCategory)}
-                            onChange={() => toggleCategory(mainCategory, subCategory)}
-                            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                          />
-                          <span className="text-gray-600 text-sm">{subCategory}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+            {/* Category Selection - Main and Subcategory Dropdowns */}
+            <div className="form-group">
+              <label htmlFor="mainCategory">Main Category</label>
+              <select
+                id="mainCategory"
+                name="mainCategory"
+                value={selectedMainCategory}
+                onChange={(e) => setSelectedMainCategory(e.target.value)}
+                required
+              >
+                <option value="">Select Main Category</option>
+                {Object.keys(categoryStructure).map((mainCategory) => (
+                  <option key={mainCategory} value={mainCategory}>
+                    {mainCategory}
+                  </option>
                 ))}
-              </div>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="subCategory">Subcategory</label>
+              <select
+                id="subCategory"
+                name="subCategory"
+                value={selectedSubCategory}
+                onChange={(e) => setSelectedSubCategory(e.target.value)}
+                disabled={!selectedMainCategory}
+                required
+              >
+                <option value="">Select Subcategory</option>
+                {selectedMainCategory &&
+                  categoryStructure[selectedMainCategory].map((subCategory) => (
+                    <option key={subCategory} value={subCategory}>
+                      {subCategory}
+                    </option>
+                  ))}
+              </select>
             </div>
 
             {/* Size Selection */}
             {getAvailableSizes().length > 0 && (
               <div className="form-group mt-4">
-                <h3 className="text-md  text-gray-800 mb-4">
-                  Select Sizes
-                </h3>
+                <h3 className="text-md text-gray-800 mb-4">Select Sizes</h3>
                 <div className="grid grid-cols-3 gap-4">
                   {getAvailableSizes().map((size) => (
-                    <label
-                      key={size}
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
+                    <label key={size} className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
                         value={size}
@@ -356,46 +292,31 @@ export default function AddProduct() {
               </div>
             )}
 
-
-            {/* Image Upload Section */}
+            {/* Image Upload */}
             <div className="mt-6">
-              <h3 className="text-md mb-2  text-gray-800">Upload Product Images</h3>
-              <div
-                {...getRootProps()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-14 text-center cursor-pointer hover:border-indigo-500 transition"
-              >
+              <h3 className="text-md mb-2 text-gray-800">Upload Product Images</h3>
+              <div {...getRootProps()} className="border-2 border-dashed border-gray-300 rounded-lg p-14 text-center cursor-pointer hover:border-indigo-500 transition">
                 <input {...getInputProps()} />
-                <p className="text-sm text-gray-500">
-                  Drag and drop images here, or click to select files
-                </p>
+                <p className="text-sm text-gray-500">Drag and drop images here, or click to select files</p>
                 <em className="text-xs text-gray-400">(Only *.jpeg, *.png, *.jpg, *.gif)</em>
               </div>
 
-              {/* Preview Selected Images */}
+              {/* Preview Images */}
               {data.product_images.length > 0 && (
                 <div className="mt-4 grid grid-cols-3 gap-4">
                   {data.product_images.map((base64String, index) => (
-                    <div
-                      key={index}
-                      className="relative w-full h-32 border rounded-lg overflow-hidden"
-                    >
-                      <img
-                        src={base64String} // Use the Base64 string directly as the src
-                        alt={`preview-${index}`}
-                        className="w-full h-full object-cover"
-                      />
+                    <div key={index} className="relative w-full h-32 border rounded-lg overflow-hidden">
+                      <img src={base64String} alt={`preview-${index}`} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
               )}
-
-
             </div>
 
+            {/* Color Selection */}
             <div className="form-group mt-4">
-              <h3 className="text-md mb-2">Select available colors of the product</h3>
+              <h3 className="text-md mb-2">Select Available Colors of the Product</h3>
               <div className="flex items-center space-x-4">
-                {/* Color Picker */}
                 <input
                   type="color"
                   value={newColor}
@@ -404,32 +325,36 @@ export default function AddProduct() {
                 />
                 <button
                   type="button"
-                  onClick={() => addColor(newColor)}
+                  onClick={() => {
+                    if (!data.colors.includes(newColor)) {
+                      setData((prevData) => ({
+                        ...prevData,
+                        colors: [...prevData.colors, newColor],
+                      }));
+                    }
+                  }}
                   className="px-4 py-2 bg-orange-400 text-sm tracking-wider text-white rounded"
                 >
                   Add Color
                 </button>
               </div>
-
-              {/* Display Selected Colors */}
               {data.colors.length > 0 && (
                 <div className="mt-4">
                   <h4>Selected Colors:</h4>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {data.colors.map((color, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-2 bg-gray-100 p-2 rounded"
-                      >
-                        <div
-                          className="w-5 h-5 rounded-full"
-                          style={{ backgroundColor: color }}
-                        ></div>
+                      <div key={index} className="flex items-center space-x-2 bg-gray-100 p-2 rounded">
+                        <div className="w-5 h-5 rounded-full" style={{ backgroundColor: color }}></div>
                         <span>{color}</span>
                         <button
                           type="button"
-                          onClick={() => removeColor(color)}
-                          className="px-2 py-1 bg-red-500 text-xs tracking-wider  text-white rounded"
+                          onClick={() => {
+                            setData((prevData) => ({
+                              ...prevData,
+                              colors: prevData.colors.filter((c) => c !== color),
+                            }));
+                          }}
+                          className="px-2 py-1 bg-red-500 text-xs tracking-wider text-white rounded"
                         >
                           Remove
                         </button>
@@ -440,8 +365,7 @@ export default function AddProduct() {
               )}
             </div>
 
-
-            <div className="form-group  mt-10">
+            <div className="form-group mt-10">
               <button type="submit" className="btn-submit h-12">
                 Add Product
               </button>

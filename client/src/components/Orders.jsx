@@ -46,7 +46,7 @@ const Orders = () => {
   return (
     <>
     <UserNavbar />
-    <div className="max-w-4xl mx-auto mt-24 p-5 bg-white shadow-lg rounded-lg">
+    <div className="max-w-4xl mx-auto mt-24 p-5 bg-white  rounded-lg">
       <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">My Orders</h2>
       <div className="space-y-6 border-[1px] rounded-md">
         {orders.map((order) => (
@@ -79,7 +79,7 @@ const Orders = () => {
                     className="w-20 h-20 object-cover rounded-md"
                   />
                   <div className="ml-4 flex-grow">
-                    <h4 className="text-xl font-semibold text-gray-700">{item.productId.name.slice(0, 70)}...</h4>
+                    <h4 className="text-md font-semibold text-gray-700">{item.productId.name.slice(0, 70)}...</h4>
                     <p className="text-gray-600">Price: ₹{item.price}</p>
                     <p className="text-gray-600">Quantity: {item.quantity}</p>
                   </div>

@@ -22,6 +22,15 @@ import Wishlist from "./components/Wishlist";
 import ContactPage from "./components/Contact";
 import Footer from "./components/Footer";
 import About from "./components/About";
+import AllProducts from "./components/AllProducts";
+import UserViewPage from "./components/UsersViewPage";
+import AdminsSingleProduct from "./components/AdminsSingleProductPage";
+import BlockProductForm from "./components/BlockProductForm";
+import EditProduct from "./components/EditProduct";
+import SellerEarnings from "./components/SellerEarnings";
+import HomePage from "./components/portfolio";
+import BlockProducts from "./components/BlockProductForm";
+import RazorpayPayment from "./components/RazorpayPayment";
 function Routing(){
     return(
         <>
@@ -48,6 +57,15 @@ function Routing(){
             <Route path={"/contact"} element={<ContactPage />} />
             <Route path={"/footer"} element={<Footer />} />
             <Route path={"/about"} element={<About />} />
+            <Route path={"/allproducts"} element={<AllProducts />} />
+            <Route path={"/usersviewpage/:id"} element={<UserViewPage />} />
+            <Route path={"/singleproduct/:id"} element={<AdminsSingleProduct />} />
+            <Route path={"/blockproductform"} element={<BlockProductForm />} />
+            <Route path={"/editproduct/:id"} element={<EditProduct />} />
+            <Route path={"/myearnings"} element={<SellerEarnings />} />
+            <Route path={"/portfolio"} element={<HomePage />} />
+            <Route path={"/blockedproducts"} element={<BlockProducts />} />
+            <Route path={"/paymentpage"} element={<RazorpayPayment/>}/>
             </Routes>
         </Router>
         </>

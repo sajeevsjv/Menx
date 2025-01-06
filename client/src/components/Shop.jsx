@@ -55,13 +55,17 @@ const Shop = () => {
   useEffect(() => {
     const loadProducts = async () => {
       const authToken = localStorage.getItem("authToken");
-      const user_id = localStorage.getItem("user_id");
+      let user_id = localStorage.getItem("user_id");
+      let guest_userId = "67757636a49d858023ab6549";
+      user_id = user_id || guest_userId;
       try {
         const response = await axios.get(`http://localhost:3003/getallproducts/${user_id}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        setAllProducts(response.data.data);
-        setFilteredProducts(response.data.data); // Default to all products
+       
+        let  unblockedProducts  = response.data.data.filter(product => product.isBlocked == false);
+        setAllProducts(unblockedProducts);
+        setFilteredProducts(unblockedProducts); // Default to all products
       } catch (error) {
         console.error("Error fetching products:", error.response || error);
       }
@@ -325,7 +329,7 @@ const Shop = () => {
 
 
 
-        <div className="main-grid-container w-full relative md:w-3/4  flex flex-col gap-4 items-center  justify-center">
+        <div className="main-grid-container w-full relative md:w-3/4  flex flex-col gap-4 items-center  justify-start">
           <div className="newin-text w-11/12 my-4 text-center">
             <span className="text-3xl font-semibold text-gray-800 lg:text-xl">
               {categories}
@@ -362,7 +366,6 @@ const Shop = () => {
                 <div className="product-details h-36">
                   <h3
                     className="product-name cursor-pointer"
-                    onClick={() => handleProductCardClick(product._id)}
                   >
                     {product.name.slice(0, 35)}...
                   </h3>
@@ -383,7 +386,7 @@ const Shop = () => {
                       <ion-icon name="cart"></ion-icon> Add to Cart
                     </button>
                   ) : (
-                    <button className="out-of-stock-btn">Out of Stock</button>
+                    <button className="out-of-stock-btn bg-red-600 text-white rounded-sm">Out of Stock!</button>
                   )}
                 </div>
               </div>

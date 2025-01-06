@@ -4,8 +4,8 @@ const Carousel = () => {
   const images = [
     "./images/freepik16-9-export-20241118055251kHs1.jpeg",
     "./images/freepik16-9-export-20241118061906wRTB.jpeg",
-    "",
-    "",
+    "./images/stepinto style.png",
+    "./images/close-up-clock-with-time-change.jpg",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);

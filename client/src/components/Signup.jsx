@@ -2,6 +2,7 @@ import React from "react";
 import { useState} from "react";
 import axios from 'axios'
 import {useNavigate } from 'react-router-dom'
+import { toast } from "react-toastify";
 
 
 function Signup() {
@@ -12,7 +13,7 @@ function Signup() {
         name: "",
         email: "",
         password: "",
-        user_type: "user",
+        user_type: "buyer",
     });
 
     const [error, setError] = useState({
@@ -85,7 +86,7 @@ function Signup() {
             return;
         }
         else if (!data.name || !data.email || !data.password) {
-            alert("please fill all fields before submitting")
+            toast.error("please fill all fields before submitting")
             return;
         }
         console.log("no errors");
@@ -105,7 +106,7 @@ function Signup() {
             console.log("response :", response);
             let message = response.data.message;
             console.log("message : ", message);
-            alert(message);
+            toast.success(message);
             
             navigate("/login")
 
@@ -219,7 +220,7 @@ function Signup() {
                   </label>
                   <div className="mt-1">
                     <select name="user_type" onChange={handlechange} id="" className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-orange-300 placeholder:text-gray-400  focus:outline-none text-md tracking-wide  sm:text-sm/6">
-                        <option value="user">User</option>
+                        <option value="buyer">buyer</option>
                         <option value="seller">Seller</option>
                     </select>
                   <span className="text-sm/4 text-red-500 tracking-wider">{error.email_error}</span>

@@ -228,7 +228,7 @@ const UserNavbar = () => {
                         <MenuItem>
                           <span
                             onClick={toggleOffcanvas}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
+                            className="block px-4 py-2 cursor-pointer text-sm text-gray-700 hover:text-orange-300 data-[focus]:bg-gray-100 data-[focus]:outline-none"
                           >
                             My Profile
                           </span>
@@ -358,13 +358,14 @@ const UserNavbar = () => {
 };
 
 const handleSignOut = () => {
-  localStorage.removeItem("authToken");
+  localStorage.clear();
   const token = localStorage.getItem("authToken");
+  setVisibleSellerControls(false);
   if (!token) {
     toast.success('succesfully loggedout');
    
     setTimeout(() => {
-      navigate("/userhome");
+      navigate("/");
     }, 2000);
   } else {
     toast.error("Failed to logout");
